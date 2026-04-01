@@ -1,6 +1,9 @@
 node_modules
 .next
+<<<<<<< HEAD
 .next-dev
+=======
+>>>>>>> 3960b65 (Initial commit)
 dist
 coverage
 .turbo
@@ -10,4 +13,7 @@ coverage
 .env.*
 *.tsbuildinfo
 storage
+<<<<<<< HEAD
 apps/web/.web-dev.lock
+=======
+>>>>>>> 3960b65 (Initial commit)

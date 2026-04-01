@@ -59,6 +59,7 @@ O comando `pnpm dev` valida as portas `3000` e `4000` antes de subir o ambiente.
 - `packages/prisma` centraliza schema e migracoes
 - `docs/template-document.md` descreve o formato oficial do JSON da etiqueta
 
+<<<<<<< HEAD
 ## Deploy de produção
 
 O repositório agora inclui suporte a deployment containerizado com Docker:
@@ -78,6 +79,8 @@ Passos recomendados:
 
 Para produção real de alta disponibilidade, use serviços gerenciados ou Kubernetes, inclua TLS, backups de banco e monitoramento.
 
+=======
+>>>>>>> 3960b65 (Initial commit)
 ## Status atual
 
 O repositorio foi estruturado para o Marco 1 com foco em:

@@ -1,0 +1,188 @@
+
+> easyprint@0.1.0 dev C:\Users\ti\Documents\VSCODE\EasyPrint
+> node ./scripts/dev.mjs
+
+
+EasyPrint dev
+Login:     http://127.0.0.1:3000/login
+Templates: http://127.0.0.1:3000/
+API:       http://127.0.0.1:4000/api
+Bootstrap: admin@easyprint.local / EasyPrint123!
+
+
+> @easyprint/shared@0.1.0 build C:\Users\ti\Documents\VSCODE\EasyPrint\packages\shared
+> tsc -p tsconfig.json
+
+Scope: 3 of 7 workspace projects
+apps/api dev$ concurrently -k -n build,serve -c yellow,cyan "nest build --watch" "nodemon --watch dist/apps/api/src --ext js --exec node dist/apps/api/src/main.js"
+apps/web dev$ next dev --hostname 127.0.0.1 --port 3000
+packages/shared dev$ tsc -p tsconfig.json --watch --preserveWatchOutput
+packages/shared dev: 15:39:12 - Starting compilation in watch mode...
+apps/api dev: [serve] [33m[nodemon] 3.1.14[39m
+apps/api dev: [serve] [33m[nodemon] to restart at any time, enter `rs`[39m
+apps/api dev: [serve] [33m[nodemon] watching path(s): dist\apps\api\src\**\*[39m
+apps/api dev: [serve] [33m[nodemon] watching extensions: js[39m
+apps/api dev: [serve] [32m[nodemon] starting `node dist/apps/api/src/main.js`[39m
+apps/web dev:    ▲ Next.js 15.5.14
+apps/web dev:    - Local:        http://127.0.0.1:3000
+apps/web dev:    - Network:      http://127.0.0.1:3000
+apps/web dev:  ✓ Starting...
+apps/api dev: [build] [2J[3J[H[[90m15:39:18[0m] Starting compilation in watch mode...
+apps/api dev: [build] 
+packages/shared dev: 15:39:19 - Found 0 errors. Watching for file changes.
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +186ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +2ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +65ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mServeStaticModule dependencies initialized[39m[38;5;3m +15ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +16ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileAssetsModule dependencies initialized[39m[38;5;3m +2ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTemplatesModule dependencies initialized[39m[38;5;3m +6ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrintersModule dependencies initialized[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrintProfilesModule dependencies initialized[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrintJobsModule dependencies initialized[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +2ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/api}:[39m[38;5;3m +61ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/health, GET} route[39m[38;5;3m +20ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +3ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +6ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/me, GET} route[39m[38;5;3m +3ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditController {/api/audit}:[39m[38;5;3m +3ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/audit, GET} route[39m[38;5;3m +4ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/templates}:[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates, GET} route[39m[38;5;3m +6ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates/:id, GET} route[39m[38;5;3m +5ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates/:id/versions, GET} route[39m[38;5;3m +4ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates, POST} route[39m[38;5;3m +2ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates/:id, PUT} route[39m[38;5;3m +7ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates/:id/publish, POST} route[39m[38;5;3m +5ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPrintersController {/api/printers}:[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/printers, GET} route[39m[38;5;3m +2ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/printers, POST} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPrintProfilesController {/api/print-profiles}:[39m[38;5;3m +3ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-profiles, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-profiles, POST} route[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mFileAssetsController {/api/file-assets}:[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file-assets, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file-assets, POST} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file-assets/upload, POST} route[39m[38;5;3m +5ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPrintJobsController {/api/print-jobs}:[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-jobs, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-jobs, POST} route[39m[38;5;3m +2ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:23 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-jobs/test, POST} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 27496  - [39m31/03/2026, 15:39:26 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +2394ms[39m
+apps/web dev:  ✓ Ready in 11.8s
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] starting `node dist/apps/api/src/main.js`[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] starting `node dist/apps/api/src/main.js`[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] starting `node dist/apps/api/src/main.js`[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [build] [[90m15:39:48[0m] Found 0 errors. Watching for file changes.
+apps/api dev: [build] 
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] restarting due to changes...[39m
+apps/api dev: [serve] [32m[nodemon] starting `node dist/apps/api/src/main.js`[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[NestFactory] [39m[32mStarting Nest application...[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrismaModule dependencies initialized[39m[38;5;3m +79ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPassportModule dependencies initialized[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAppModule dependencies initialized[39m[38;5;3m +10ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigHostModule dependencies initialized[39m[38;5;3m +2ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mServeStaticModule dependencies initialized[39m[38;5;3m +7ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mConfigModule dependencies initialized[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuditModule dependencies initialized[39m[38;5;3m +6ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mFileAssetsModule dependencies initialized[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mJwtModule dependencies initialized[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mTemplatesModule dependencies initialized[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrintersModule dependencies initialized[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrintProfilesModule dependencies initialized[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mPrintJobsModule dependencies initialized[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[InstanceLoader] [39m[32mAuthModule dependencies initialized[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAppController {/api}:[39m[38;5;3m +24ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/health, GET} route[39m[38;5;3m +6ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuthController {/api/auth}:[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/login, POST} route[39m[38;5;3m +2ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/auth/me, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mAuditController {/api/audit}:[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/audit, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mTemplatesController {/api/templates}:[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates/:id, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates/:id/versions, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates, POST} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates/:id, PUT} route[39m[38;5;3m +2ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/templates/:id/publish, POST} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPrintersController {/api/printers}:[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/printers, GET} route[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/printers, POST} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPrintProfilesController {/api/print-profiles}:[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-profiles, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-profiles, POST} route[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mFileAssetsController {/api/file-assets}:[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file-assets, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file-assets, POST} route[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/file-assets/upload, POST} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RoutesResolver] [39m[32mPrintJobsController {/api/print-jobs}:[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-jobs, GET} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-jobs, POST} route[39m[38;5;3m +1ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:54 [32m    LOG[39m [38;5;3m[RouterExplorer] [39m[32mMapped {/api/print-jobs/test, POST} route[39m[38;5;3m +0ms[39m
+apps/api dev: [serve] [32m[Nest] 23628  - [39m31/03/2026, 15:39:55 [32m    LOG[39m [38;5;3m[NestApplication] [39m[32mNest application successfully started[39m[38;5;3m +703ms[39m
+ ELIFECYCLE  Command failed with exit code 4294967295.
