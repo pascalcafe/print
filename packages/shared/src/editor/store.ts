@@ -234,6 +234,18 @@ export const updateTemplateMetadata = (
     ...patch
   });
 
+export const updateTemplateDocumentMetadata = (
+  state: EditorHistoryState,
+  patch: Partial<LabelDocument["metadata"]>
+): EditorHistoryState =>
+  commit(state, {
+    ...state.present,
+    metadata: {
+      ...state.present.metadata,
+      ...patch
+    }
+  });
+
 export const addDataField = (
   state: EditorHistoryState,
   field?: Partial<LabelDataField>

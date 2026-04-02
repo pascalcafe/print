@@ -22,6 +22,7 @@ import {
   undo,
   updateDataField,
   updateDocumentSettings,
+  updateTemplateDocumentMetadata,
   updateTemplateMetadata,
   updateElement
 } from "@easyprint/shared/editor/store";
@@ -51,6 +52,7 @@ interface EditorStore {
   alignSelectedElement: (alignment: ElementAlignment) => void;
   patchDocument: (patch: Partial<LabelDocument["document"]>) => void;
   patchTemplate: (patch: Partial<Pick<LabelDocument, "name" | "status">>) => void;
+  patchMetadata: (patch: Partial<LabelDocument["metadata"]>) => void;
   syncPersistedTemplate: (
     patch: Partial<Pick<LabelDocument, "id" | "version" | "status">>
   ) => void;
@@ -187,6 +189,11 @@ export const useEditorStore = create<EditorStore>((set) => ({
     set((state) => ({
       history: updateTemplateMetadata(state.history, patch),
       statusMessage: "Template atualizado"
+    })),
+  patchMetadata: (patch) =>
+    set((state) => ({
+      history: updateTemplateDocumentMetadata(state.history, patch),
+      statusMessage: "Metadados do template atualizados"
     })),
   syncPersistedTemplate: (patch) =>
     set((state) => ({

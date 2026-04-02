@@ -8,7 +8,7 @@ import { SessionGuard } from "../../../components/app/session-guard";
 import { sessionHasPermission, type ApiSession } from "../../../lib/session";
 import type { LabelDocument } from "@easyprint/shared/template/document";
 import { buildPreviewPayload } from "@easyprint/shared/template/render";
-import { LabelDocumentSurface } from "../../../components/editor/document-renderer";
+import { LabelPreviewSurface } from "../../../components/editor/label-preview-surface";
 import { EDITOR_UNIT_SCALE } from "../../../lib/editor-text";
 
 export default function PreviewPage() {
@@ -88,15 +88,11 @@ export default function PreviewPage() {
               }}
             >
               <div data-print-root>
-                <LabelDocumentSurface
+                <LabelPreviewSurface
                   document={document}
                   scale={EDITOR_UNIT_SCALE}
                   previewPayload={previewPayload}
-                  surfaceStyle={{
-                    borderRadius: 20,
-                    border: "1px solid var(--line)",
-                    boxShadow: "0 20px 40px rgba(15, 23, 42, 0.08)"
-                  }}
+                  preset="preview"
                 />
               </div>
             </div>

@@ -11,6 +11,12 @@ import { uploadAsset } from "../../lib/api";
 import { measureTextElementHeight, TEXT_FONT_OPTIONS } from "../../lib/editor-text";
 import { useEditorStore } from "../../lib/editor-store";
 import { loadStoredSession } from "../../lib/session";
+import {
+  getCategoryDefinition,
+  MODEL_CATEGORIES,
+  normalizeModelCategory,
+  type ModelCategory
+} from "../../lib/template-library";
 
 export function EditorProperties({
   readOnly = false,
@@ -37,6 +43,7 @@ export function EditorProperties({
     patchElement,
     patchDocument,
     patchTemplate,
+    patchMetadata,
     addTemplateDataField,
     patchTemplateDataField,
     removeTemplateDataField,
@@ -50,6 +57,8 @@ export function EditorProperties({
   const selectedElement = document.elements.find((element) => element.id === selectedElementId);
   const elementReadOnly = readOnly || selectedElement?.locked;
   const missingRequiredFields = getMissingRequiredFields(document);
+  const selectedCategory =
+    normalizeModelCategory(document.metadata.category) ?? "doces";
 
   const patchSelectedElement = (patch: Partial<LabelElement>) => {
     if (!selectedElement) return;
@@ -168,6 +177,36 @@ export function EditorProperties({
               <option value="archived">archived</option>
             </select>
           </label>
+          <label>
+            <div className="muted" style={{ fontSize: 12, marginBottom: 6 }}>
+              Categoria do modelo
+            </div>
+            <select
+              value={selectedCategory}
+              disabled={readOnly}
+              onChange={(event) =>
+                patchMetadata({ category: event.target.value as ModelCategory })
+              }
+            >
+              {MODEL_CATEGORIES.map((category) => (
+                <option key={category} value={category}>
+                  {getCategoryDefinition(category).label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <div
+            style={{
+              padding: 12,
+              borderRadius: 14,
+              background: getCategoryDefinition(selectedCategory).soft,
+              color: getCategoryDefinition(selectedCategory).accent,
+              fontSize: 13,
+              fontWeight: 600
+            }}
+          >
+            {getCategoryDefinition(selectedCategory).description}
+          </div>
         </div>
       </section>
 

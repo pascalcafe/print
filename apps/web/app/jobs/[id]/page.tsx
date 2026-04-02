@@ -43,7 +43,8 @@ export default function JobDetailPage() {
                 <StatusBadge status={job.status}>{job.status}</StatusBadge>
               </div>
               <div className="muted" style={{ fontSize: 14 }}>
-                Job {job.id} | versao do template v{job.templateVersion ?? "-"} | modo {job.mode}
+                Job {job.id} | versao do template v{job.templateVersion ?? "-"} | modo {job.mode} |
+                origem {job.source ?? "manual"} | {job.copies} copia{job.copies > 1 ? "s" : ""}
               </div>
               <div className="muted" style={{ fontSize: 14 }}>
                 Impressora: {job.printer?.name ?? "Nao informada"} | Perfil:{" "}
@@ -51,6 +52,9 @@ export default function JobDetailPage() {
               </div>
               <div className="muted" style={{ fontSize: 14 }}>
                 Correlacao: {job.correlationId ?? "-"} | retry {job.retryCount}/{job.maxAttempts ?? 3}
+                {job.startedAt
+                  ? ` | iniciado ${new Date(job.startedAt).toLocaleString("pt-BR")}`
+                  : ""}
                 {job.nextAttemptAt
                   ? ` | proxima tentativa ${new Date(job.nextAttemptAt).toLocaleString("pt-BR")}`
                   : ""}
@@ -67,6 +71,13 @@ export default function JobDetailPage() {
                 <strong>Payload</strong>
                 <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: 12 }}>
                   {JSON.stringify(job.payloadJson, null, 2)}
+                </pre>
+              </section>
+
+              <section className="panel" style={{ padding: 20, borderRadius: 20, display: "grid", gap: 12 }}>
+                <strong>Dados resolvidos</strong>
+                <pre style={{ margin: 0, whiteSpace: "pre-wrap", fontSize: 12 }}>
+                  {JSON.stringify(job.resolvedDataJson ?? {}, null, 2)}
                 </pre>
               </section>
 

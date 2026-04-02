@@ -5,10 +5,33 @@ import { AuditService } from "../audit/audit.service";
 import type { SessionUser } from "../auth/types/session-user";
 import { getCorrelationId } from "../observability/request-context";
 import { PrismaService } from "../prisma/prisma.service";
+import { CreatePrintJobEventDto } from "./dto/create-print-job-event.dto";
 import { CreatePrintJobDto } from "./dto/create-print-job.dto";
 import { RepeatPrintJobDto } from "./dto/repeat-print-job.dto";
 
 const toJson = (value: unknown) => value as Prisma.InputJsonValue;
+const asRecord = (value: Prisma.JsonValue | null | undefined): Record<string, unknown> => {
+  if (!value || typeof value !== "object" || Array.isArray(value)) {
+    return {};
+  }
+
+  return value as Record<string, unknown>;
+};
+
+const EVENT_MESSAGE_BY_TYPE: Record<string, string> = {
+  "job.created": "Job de impressao registrado",
+  "job.queued": "Job de impressao entrou na fila operacional",
+  "job.started": "Execucao de impressao iniciada",
+  "job.completed": "Execucao de impressao concluida",
+  "job.failed": "Execucao de impressao falhou",
+  "job.canceled": "Job cancelado manualmente",
+  "job.retry.created": "Retry do job registrado",
+  "job.reprint.created": "Reimpressao registrada",
+  "job.browser-print.dialog-opened":
+    "Fluxo de impressao local enviado ao dialogo do navegador",
+  "job.browser-print.dialog-closed":
+    "Dialogo de impressao do navegador finalizado; conclusao fisica depende do ambiente local"
+};
 
 type PrintJobFilters = {
   search?: string;
@@ -41,6 +64,23 @@ export class PrintJobsService {
         }
       }
     });
+  }
+
+  private resolveEventMessage(type: string, message?: string) {
+    return message?.trim() || EVENT_MESSAGE_BY_TYPE[type] || "Evento operacional registrado para o job";
+  }
+
+  private buildCreatePayloadSummary(payload: CreatePrintJobDto, correlationId: string) {
+    return {
+      templateId: payload.templateId,
+      printerId: payload.printerId,
+      printProfileId: payload.printProfileId,
+      copies: payload.copies ?? 1,
+      source: payload.source ?? "MANUAL_MODAL",
+      mode: payload.mode ?? "browser-print",
+      hasResolvedData: Boolean(payload.resolvedData),
+      correlationId
+    };
   }
 
   async list(tenantId: string, filters?: PrintJobFilters) {
@@ -171,28 +211,50 @@ export class PrintJobsService {
     }
 
     const correlationId = getCorrelationId() ?? randomUUID();
+    const copies = payload.copies ?? 1;
+    const source = payload.source ?? "MANUAL_MODAL";
+    const mode = payload.mode ?? "browser-print";
 
     const job = await this.prisma.printJob.create({
       data: {
         tenantId: session.tenantId,
         templateId: payload.templateId,
         templateVersion: template.currentVersion,
+        copies,
+        source,
         printerId: payload.printerId,
         printProfileId: payload.printProfileId,
         requestedById: session.userId,
         correlationId,
         idempotencyKey: payload.idempotencyKey ?? randomUUID(),
         maxAttempts: payload.maxAttempts ?? 3,
-        mode: payload.mode ?? "test",
+        mode,
         status: PrintJobStatus.QUEUED,
         payloadJson: toJson(payload.payload),
+        resolvedDataJson: payload.resolvedData ? toJson(payload.resolvedData) : undefined,
         events: {
-          create: {
-            type: "job.created",
-            message: "Job de impressao registrado",
-            correlationId,
-            payloadJson: toJson(payload.payload)
-          }
+          create: [
+            {
+              type: "job.created",
+              message: this.resolveEventMessage("job.created"),
+              correlationId,
+              payloadJson: toJson({
+                source,
+                copies,
+                mode
+              })
+            },
+            {
+              type: "job.queued",
+              message: this.resolveEventMessage("job.queued"),
+              correlationId,
+              payloadJson: toJson({
+                source,
+                copies,
+                mode
+              })
+            }
+          ]
         }
       },
       include: {
@@ -207,10 +269,8 @@ export class PrintJobsService {
       entityId: job.id,
       action: "print-job.created",
       payload: {
-        templateId: payload.templateId,
-        mode: payload.mode ?? "test",
-        templateVersion: template.currentVersion,
-        correlationId
+        ...this.buildCreatePayloadSummary(payload, correlationId),
+        templateVersion: template.currentVersion
       }
     });
 
@@ -240,12 +300,16 @@ export class PrintJobsService {
     const simulateFailure = payload.payload?.simulateFailure === true;
     const status = simulateFailure ? PrintJobStatus.FAILED : PrintJobStatus.COMPLETED;
     const correlationId = getCorrelationId() ?? randomUUID();
+    const copies = payload.copies ?? 1;
+    const source = payload.source ?? "MANUAL_MODAL";
 
     const job = await this.prisma.printJob.create({
       data: {
         tenantId: session.tenantId,
         templateId: payload.templateId,
         templateVersion: template.currentVersion,
+        copies,
+        source,
         printerId: payload.printerId,
         printProfileId: payload.printProfileId,
         requestedById: session.userId,
@@ -255,6 +319,7 @@ export class PrintJobsService {
         mode: "test",
         status,
         payloadJson: toJson(payload.payload),
+        resolvedDataJson: payload.resolvedData ? toJson(payload.resolvedData) : undefined,
         resultJson: simulateFailure
           ? toJson({
               simulated: true,
@@ -315,10 +380,8 @@ export class PrintJobsService {
       entityId: job.id,
       action: simulateFailure ? "print-job.failed" : "print-job.test",
       payload: {
-        templateId: payload.templateId,
-        printerId: payload.printerId,
-        templateVersion: template.currentVersion,
-        correlationId
+        ...this.buildCreatePayloadSummary(payload, correlationId),
+        templateVersion: template.currentVersion
       }
     });
 
@@ -342,6 +405,8 @@ export class PrintJobsService {
         tenantId: session.tenantId,
         templateId: source.templateId,
         templateVersion: source.templateVersion,
+        copies: source.copies,
+        source: source.source,
         printerId: payload.printerId ?? source.printerId ?? undefined,
         printProfileId: payload.printProfileId ?? source.printProfileId ?? undefined,
         requestedById: session.userId,
@@ -353,6 +418,7 @@ export class PrintJobsService {
         mode: source.mode,
         status: source.mode === "test" ? PrintJobStatus.COMPLETED : PrintJobStatus.QUEUED,
         payloadJson: toJson(payload.payload ?? (source.payloadJson as Record<string, unknown>)),
+        resolvedDataJson: source.resolvedDataJson ? toJson(source.resolvedDataJson) : undefined,
         resultJson:
           source.mode === "test"
             ? toJson({
@@ -427,6 +493,8 @@ export class PrintJobsService {
         tenantId: session.tenantId,
         templateId: source.templateId,
         templateVersion: source.templateVersion,
+        copies: source.copies,
+        source: source.source,
         printerId: payload.printerId ?? source.printerId ?? undefined,
         printProfileId: payload.printProfileId ?? source.printProfileId ?? undefined,
         requestedById: session.userId,
@@ -438,6 +506,7 @@ export class PrintJobsService {
         mode: source.mode,
         status: source.mode === "test" ? PrintJobStatus.COMPLETED : PrintJobStatus.QUEUED,
         payloadJson: toJson(payload.payload ?? (source.payloadJson as Record<string, unknown>)),
+        resolvedDataJson: source.resolvedDataJson ? toJson(source.resolvedDataJson) : undefined,
         resultJson:
           source.mode === "test"
             ? toJson({
@@ -533,6 +602,73 @@ export class PrintJobsService {
       action: "print-job.canceled",
       payload: {
         previousStatus: job.status
+      }
+    });
+
+    return updated;
+  }
+
+  async appendEvent(id: string, payload: CreatePrintJobEventDto, session: SessionUser) {
+    const job = await this.getById(id, session.tenantId);
+    const correlationId = getCorrelationId() ?? job.correlationId ?? randomUUID();
+    const nextResult =
+      payload.result || payload.failureReason
+        ? {
+            ...asRecord(job.resultJson),
+            ...(payload.result ?? {}),
+            ...(payload.failureReason
+              ? {
+                  failureReason: payload.failureReason
+                }
+              : {})
+          }
+        : undefined;
+
+    const updated = await this.prisma.printJob.update({
+      where: { id },
+      data: {
+        ...(payload.status ? { status: payload.status } : {}),
+        ...(payload.status === PrintJobStatus.RUNNING && !job.startedAt
+          ? { startedAt: new Date() }
+          : {}),
+        ...(payload.status === PrintJobStatus.COMPLETED
+          ? { completedAt: new Date() }
+          : {}),
+        ...(payload.status === PrintJobStatus.FAILED
+          ? { failureReason: payload.failureReason ?? job.failureReason ?? "Falha operacional" }
+          : {}),
+        ...(nextResult ? { resultJson: toJson(nextResult) } : {}),
+        events: {
+          create: {
+            type: payload.type,
+            message: this.resolveEventMessage(payload.type, payload.message),
+            correlationId,
+            payloadJson: payload.payload ? toJson(payload.payload) : undefined
+          }
+        }
+      },
+      include: {
+        events: {
+          orderBy: {
+            createdAt: "desc"
+          }
+        }
+      }
+    });
+
+    await this.auditService.register({
+      tenantId: session.tenantId,
+      userId: session.userId,
+      entityType: "PrintJob",
+      entityId: id,
+      action: payload.status
+        ? `print-job.${String(payload.status).toLowerCase()}`
+        : "print-job.event",
+      payload: {
+        eventType: payload.type,
+        status: payload.status,
+        failureReason: payload.failureReason,
+        correlationId
       }
     });
 
