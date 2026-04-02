@@ -1,9 +1,20 @@
+import { Type } from "class-transformer";
 import { IsInt, IsNotEmpty, IsObject, IsOptional, IsString, Min } from "class-validator";
 
 export class CreatePrintJobDto {
   @IsString()
   @IsNotEmpty()
   templateId!: string;
+
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @IsOptional()
+  copies?: number;
+
+  @IsString()
+  @IsOptional()
+  source?: string;
 
   @IsString()
   @IsOptional()
@@ -21,6 +32,7 @@ export class CreatePrintJobDto {
   @IsOptional()
   idempotencyKey?: string;
 
+  @Type(() => Number)
   @IsInt()
   @Min(1)
   @IsOptional()
@@ -28,4 +40,8 @@ export class CreatePrintJobDto {
 
   @IsObject()
   payload!: Record<string, unknown>;
+
+  @IsObject()
+  @IsOptional()
+  resolvedData?: Record<string, unknown>;
 }

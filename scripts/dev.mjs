@@ -65,6 +65,7 @@ async function main() {
   console.log("Bootstrap: admin@easyprint.local / EasyPrint123!");
   console.log("");
 
+  await run(pnpmCommand, ["--filter", "@easyprint/prisma", "generate"]);
   await run(pnpmCommand, ["--filter", "@easyprint/shared", "build"]);
 
   const child = spawn(
@@ -72,8 +73,6 @@ async function main() {
     [
       "--stream",
       "--parallel",
-      "--filter",
-      "@easyprint/shared",
       "--filter",
       "@easyprint/web",
       "--filter",

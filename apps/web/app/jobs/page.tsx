@@ -102,7 +102,8 @@ export default function JobsPage() {
                     <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
                       <StatusBadge status={job.status}>{job.status}</StatusBadge>
                       <span className="muted" style={{ fontSize: 13 }}>
-                        {job.mode} | v{job.templateVersion ?? "-"} | tentativas {job.retryCount}
+                        {job.mode} | origem {job.source ?? "manual"} | v{job.templateVersion ?? "-"} |{" "}
+                        {job.copies} copia{job.copies > 1 ? "s" : ""} | tentativas {job.retryCount}
                       </span>
                     </div>
                     <div className="muted" style={{ fontSize: 13 }}>
@@ -111,6 +112,9 @@ export default function JobsPage() {
                     </div>
                     <div className="muted" style={{ fontSize: 13 }}>
                       correlacao {job.correlationId ?? "-"} | max tentativas {job.maxAttempts ?? 3}
+                      {job.startedAt
+                        ? ` | iniciado ${new Date(job.startedAt).toLocaleString("pt-BR")}`
+                        : ""}
                       {job.nextAttemptAt
                         ? ` | proxima tentativa ${new Date(job.nextAttemptAt).toLocaleString("pt-BR")}`
                         : ""}

@@ -1,6 +1,7 @@
 import { createInitialDocument } from "@easyprint/shared/template/factories";
 import type { LabelDocument } from "@easyprint/shared/template/document";
 import type { ApiSession } from "./session";
+import type { ModelCategory } from "./template-library";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000/api";
 
@@ -10,6 +11,7 @@ export interface TemplateListItem {
   status: string;
   currentVersion: number;
   lastPublishedVersion?: number | null;
+  category?: ModelCategory | null;
   updatedAt: string;
 }
 
@@ -136,10 +138,13 @@ export interface PrintJobItem {
   id: string;
   status: string;
   mode: string;
+  source?: string | null;
   templateVersion?: number | null;
+  copies: number;
   retryCount: number;
   maxAttempts?: number;
   correlationId?: string | null;
+  startedAt?: string | null;
   nextAttemptAt?: string | null;
   reprintOfJobId?: string | null;
   failureReason?: string | null;
@@ -173,6 +178,7 @@ export interface PrintJobItem {
 
 export interface PrintJobDetail extends PrintJobItem {
   payloadJson: Record<string, unknown>;
+  resolvedDataJson?: Record<string, unknown> | null;
   resultJson?: Record<string, unknown> | null;
   canceledAt?: string | null;
   requestedBy?: {
@@ -204,6 +210,23 @@ export interface PrintJobDetail extends PrintJobItem {
     errorMessage?: string | null;
     createdAt: string;
     completedAt?: string | null;
+  }>;
+}
+
+export interface PrintJobMutationResult {
+  id: string;
+  status: string;
+  mode: string;
+  source?: string | null;
+  templateVersion?: number | null;
+  copies: number;
+  correlationId?: string | null;
+  createdAt?: string;
+  events?: Array<{
+    id: string;
+    type: string;
+    message: string;
+    createdAt: string;
   }>;
 }
 
@@ -617,15 +640,18 @@ export async function createPrintProfile(
 export async function createPrintJob(
   payload: {
     templateId: string;
+    copies: number;
+    source?: string;
     printerId?: string;
     printProfileId?: string;
     mode?: string;
     idempotencyKey?: string;
     maxAttempts?: number;
     payload: Record<string, unknown>;
+    resolvedData?: Record<string, unknown>;
   },
   session: ApiSession
-) {
+): Promise<PrintJobMutationResult> {
   return apiFetch("/print-jobs", session, {
     method: "POST",
     body: JSON.stringify(payload)
@@ -635,15 +661,36 @@ export async function createPrintJob(
 export async function createTestPrintJob(
   payload: {
     templateId: string;
+    copies?: number;
+    source?: string;
     printerId?: string;
     printProfileId?: string;
     idempotencyKey?: string;
     maxAttempts?: number;
     payload: Record<string, unknown>;
+    resolvedData?: Record<string, unknown>;
+  },
+  session: ApiSession
+): Promise<PrintJobMutationResult> {
+  return apiFetch("/print-jobs/test", session, {
+    method: "POST",
+    body: JSON.stringify(payload)
+  });
+}
+
+export async function createPrintJobEvent(
+  id: string,
+  payload: {
+    type: string;
+    message?: string;
+    status?: "QUEUED" | "RUNNING" | "COMPLETED" | "FAILED" | "CANCELED";
+    payload?: Record<string, unknown>;
+    result?: Record<string, unknown>;
+    failureReason?: string;
   },
   session: ApiSession
 ) {
-  return apiFetch("/print-jobs/test", session, {
+  return apiFetch(`/print-jobs/${id}/events`, session, {
     method: "POST",
     body: JSON.stringify(payload)
   });

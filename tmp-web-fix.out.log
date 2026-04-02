@@ -1,0 +1,23 @@
+
+> @easyprint/web@0.1.0 dev C:\Users\ti\Documents\VSCODE\EasyPrint\apps\web
+> node ./scripts/dev.mjs
+
+[web-dev] cache .next limpo antes de iniciar o Next dev
+   ▲ Next.js 15.5.14
+   - Local:        http://127.0.0.1:3000
+   - Network:      http://127.0.0.1:3000
+   - Experiments (use with caution):
+     ✓ externalDir
+
+ ✓ Starting...
+ ✓ Ready in 27.1s
+ ○ Compiling / ...
+ ✓ Compiled / in 50.6s (650 modules)
+ GET / 200 in 60010ms
+ ○ Compiling /observability ...
+ ✓ Compiled /observability in 14.4s (643 modules)
+ GET /observability 200 in 19192ms
+ ○ Compiling /editor/[id] ...
+ ✓ Compiled /editor/[id] in 8.8s (674 modules)
+ GET /editor/new 200 in 18743ms
+[?25h

@@ -87,6 +87,27 @@ type TemplateFilters = {
   status?: string;
 };
 
+const extractTemplateCategory = (metadataJson: Prisma.JsonValue | null, name: string) => {
+  const rawCategory =
+    metadataJson &&
+    typeof metadataJson === "object" &&
+    !Array.isArray(metadataJson) &&
+    "category" in metadataJson
+      ? metadataJson.category
+      : undefined;
+
+  if (typeof rawCategory === "string") {
+    return rawCategory;
+  }
+
+  const normalizedName = name.toLowerCase();
+  if (/(doce|bolo|sobremesa|confeitaria)/.test(normalizedName)) return "doces";
+  if (/(salgado|lanche|snack|coxinha|empada)/.test(normalizedName)) return "salgados";
+  if (/(bebida|suco|cafe|chá|cha|agua|drink)/.test(normalizedName)) return "bebidas";
+  if (/(refei|almoco|almoço|jantar|marmita|prato)/.test(normalizedName)) return "refeicao";
+  return "doces";
+};
+
 @Injectable()
 export class TemplatesService {
   constructor(
@@ -132,7 +153,7 @@ export class TemplatesService {
   }
 
   async list(tenantId: string, filters?: TemplateFilters) {
-    return this.prisma.template.findMany({
+    const templates = await this.prisma.template.findMany({
       where: {
         tenantId,
         ...(filters?.status ? { status: filters.status as TemplateStatus } : {}),
@@ -163,10 +184,16 @@ export class TemplatesService {
         status: true,
         currentVersion: true,
         lastPublishedVersion: true,
+        metadataJson: true,
         updatedAt: true,
         createdAt: true
       }
     });
+
+    return templates.map((template) => ({
+      ...template,
+      category: extractTemplateCategory(template.metadataJson, template.name)
+    }));
   }
 
   async getById(id: string, tenantId: string) {

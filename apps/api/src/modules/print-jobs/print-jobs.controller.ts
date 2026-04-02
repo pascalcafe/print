@@ -12,6 +12,7 @@ import { CurrentSession } from "../auth/decorators/current-session.decorator";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { PermissionsGuard } from "../auth/guards/permissions.guard";
 import type { SessionUser } from "../auth/types/session-user";
+import { CreatePrintJobEventDto } from "./dto/create-print-job-event.dto";
 import { CreatePrintJobDto } from "./dto/create-print-job.dto";
 import { RepeatPrintJobDto } from "./dto/repeat-print-job.dto";
 import { PrintJobsService } from "./print-jobs.service";
@@ -41,6 +42,16 @@ export class PrintJobsController {
   @Permissions("print-job.test")
   create(@Body() body: CreatePrintJobDto, @CurrentSession() session: SessionUser) {
     return this.printJobsService.create(body, session);
+  }
+
+  @Post(":id/events")
+  @Permissions("print-job.test")
+  appendEvent(
+    @Param("id") id: string,
+    @Body() body: CreatePrintJobEventDto,
+    @CurrentSession() session: SessionUser
+  ) {
+    return this.printJobsService.appendEvent(id, body, session);
   }
 
   @Post("test")

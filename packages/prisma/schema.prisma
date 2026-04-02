@@ -413,6 +413,8 @@ model PrintJob {
   tenantId        String
   templateId      String
   templateVersion Int?
+  copies          Int                @default(1)
+  source          String?
   printerId       String?
   printProfileId  String?
   requestedById   String?
@@ -426,8 +428,10 @@ model PrintJob {
   status          PrintJobStatus     @default(QUEUED)
   mode            String             @default("test")
   payloadJson     Json
+  resolvedDataJson Json?
   resultJson      Json?
   failureReason   String?
+  startedAt       DateTime?
   canceledAt      DateTime?
   completedAt     DateTime?
   tenant          Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
