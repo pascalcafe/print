@@ -1,7 +1,6 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   createTestPrintJob,
@@ -30,12 +29,14 @@ import type { LabelDocument } from "@easyprint/shared/template/document";
 import { EditorCanvas } from "./canvas";
 import { EditorLibrary } from "./library";
 import { EditorProperties } from "./properties";
-import { EditorPreview } from "./preview";
 import { EditorStatusBar } from "./status-bar";
+import { EditorTopbar } from "./topbar";
 
 export function EditorShell({ initialDocument }: { initialDocument: LabelDocument }) {
   const router = useRouter();
   const [session] = useState(() => loadStoredSession());
+  const [showLibrary, setShowLibrary] = useState(true);
+  const [showInspector, setShowInspector] = useState(true);
   const canEdit = sessionHasPermission(session, "template.edit");
   const canReview = sessionHasPermission(session, "template.review");
   const canApprove = sessionHasPermission(session, "template.approve");
@@ -427,153 +428,119 @@ export function EditorShell({ initialDocument }: { initialDocument: LabelDocumen
   }, [handleSave, redoAction, undoAction]);
 
   return (
-    <main className="shell" style={{ padding: 18 }}>
+    <main className="shell editor-shell">
       <section
-        className="panel"
+        className="panel editor-shell__frame"
         style={{
           display: "grid",
-          gridTemplateRows: "auto minmax(0, 1fr) 56px",
-          minHeight: "calc(100vh - 36px)",
+          gridTemplateRows: "auto auto minmax(0, 1fr) auto",
+          minHeight: "calc(100vh - 56px)",
           overflow: "hidden"
         }}
       >
-        <div style={{ borderBottom: "1px solid var(--line)" }}>
-          <header
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              minHeight: 72,
-              padding: "0 20px",
-              gap: 16
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-              <button onClick={() => router.push("/")}>Voltar</button>
-              <div className="muted" style={{ fontSize: 12, marginBottom: 6 }}>
-                EasyPrint / Editor
-              </div>
-              <input
-                value={history.present.name}
-                disabled={editorReadOnly}
-                onChange={(event) => patchTemplate({ name: event.target.value })}
-                style={{ minWidth: 260, fontWeight: 700 }}
-              />
-            </div>
+        <EditorTopbar
+          editorReadOnly={editorReadOnly}
+          canUndo={canUndo}
+          canRedo={canRedo}
+          canReview={canReview}
+          canApprove={canApprove}
+          canPublish={canPublish}
+          canCreateVersion={canCreateVersion}
+          canPrintTest={canPrintTest}
+          showLibrary={showLibrary}
+          showInspector={showInspector}
+          onToggleLibrary={() => setShowLibrary((current) => !current)}
+          onToggleInspector={() => setShowInspector((current) => !current)}
+          onBack={() => router.push("/")}
+          onSave={() => void handleSave()}
+          onPrintTest={() => void handlePrintTest()}
+          onPublish={() => void handlePublish()}
+          onSubmitReview={() => void handleSubmitReview()}
+          onApprovalDecision={(decision) => void handleApprovalDecision(decision)}
+          onCreateVersion={() => void handleCreateVersion()}
+        />
 
-            <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
-              <button disabled={!canUndo} onClick={undoAction}>
-                Desfazer
-              </button>
-              <button disabled={!canRedo} onClick={redoAction}>
-                Refazer
-              </button>
-              {!editorReadOnly ? <button onClick={() => void handleSave()}>Salvar</button> : null}
-              {canReview && history.present.status === "draft" && history.present.id !== "template-new" ? (
-                <button onClick={() => void handleSubmitReview()}>Enviar revisao</button>
-              ) : null}
-              {canApprove && history.present.status === "in_review" ? (
-                <>
-                  <button onClick={() => void handleApprovalDecision("rejected")}>Rejeitar</button>
-                  <button onClick={() => void handleApprovalDecision("approved")}>Aprovar</button>
-                </>
-              ) : null}
-              <Link href={`/preview/${history.present.id}`}>Preview</Link>
-              {canPrintTest ? <button onClick={handlePrintTest}>Imprimir teste</button> : null}
-              {canPublish ? (
-                <button
-                  disabled={history.present.status !== "approved"}
-                  onClick={handlePublish}
-                  style={{
-                    background: "var(--primary)",
-                    color: "#fff",
-                    border: "none",
-                    borderRadius: 999,
-                    padding: "10px 16px"
-                  }}
-                >
-                  Publicar
-                </button>
-              ) : null}
+        {recoverableDraft ? (
+          <div className="editor-shell__draft-banner">
+            <div style={{ display: "grid", gap: 4 }}>
+              <strong style={{ fontSize: 14 }}>Rascunho local encontrado</strong>
+              <span className="muted" style={{ fontSize: 12 }}>
+                Existe uma versao local mais recente salva em{" "}
+                {new Date(recoverableDraft.savedAt).toLocaleString("pt-BR")}.
+              </span>
             </div>
-          </header>
-
-          {recoverableDraft ? (
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                gap: 16,
-                padding: "12px 20px",
-                background: "rgba(245, 158, 11, 0.08)",
-                borderTop: "1px solid rgba(245, 158, 11, 0.18)"
-              }}
-            >
-              <div style={{ display: "grid", gap: 4 }}>
-                <strong style={{ fontSize: 14 }}>Rascunho local encontrado</strong>
-                <span className="muted" style={{ fontSize: 12 }}>
-                  Existe uma versao local mais recente salva em{" "}
-                  {new Date(recoverableDraft.savedAt).toLocaleString("pt-BR")}.
-                </span>
-              </div>
-              <div style={{ display: "flex", gap: 10 }}>
-                <button onClick={handleDiscardDraft}>Descartar</button>
-                <button onClick={handleRestoreDraft}>Restaurar rascunho</button>
-              </div>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <button onClick={handleDiscardDraft}>Descartar</button>
+              <button onClick={handleRestoreDraft}>Restaurar rascunho</button>
             </div>
-          ) : null}
-        </div>
+          </div>
+        ) : null}
 
         <div
+          className="editor-shell__body"
           style={{
             display: "grid",
-            gridTemplateColumns: "260px minmax(0, 1fr) 320px",
+            gridTemplateColumns: `${showLibrary ? "216px" : "0px"} minmax(0, 1fr) ${showInspector ? "296px" : "0px"}`,
             minHeight: 0,
             overflow: "hidden"
           }}
         >
-          <EditorLibrary readOnly={editorReadOnly} />
+          {showLibrary ? <EditorLibrary readOnly={editorReadOnly} /> : <div />}
           <div
-            className="editor-scrollarea"
+            className="editor-shell__stage"
             style={{
               minWidth: 0,
               background:
                 "linear-gradient(180deg, rgba(248,250,252,0.92), rgba(241,245,249,0.92))",
-              borderLeft: "1px solid var(--line)",
-              borderRight: "1px solid var(--line)"
+              borderLeft: showLibrary ? "1px solid var(--line)" : "none",
+              borderRight: showInspector ? "1px solid var(--line)" : "none"
             }}
           >
-            <EditorCanvas readOnly={editorReadOnly} />
+            <div className="editor-shell__stage-header" data-print-chrome>
+              <div className="editor-shell__stage-title">
+                <strong>Canvas</strong>
+                <span className="muted">
+                  Documento principal em foco, com ferramentas tecnicas distribuídas na barra superior.
+                </span>
+              </div>
+              <div className="editor-shell__stage-meta">
+                <span className="editor-toolbar__tag">
+                  {history.present.document.width} x {history.present.document.height} {history.present.document.unit}
+                </span>
+                <span className="editor-toolbar__tag">
+                  {history.present.elements.length} elementos
+                </span>
+                <button
+                  type="button"
+                  className="editor-toolbar__button editor-toolbar__button--ghost"
+                  onClick={() => router.push("/")}
+                >
+                  Biblioteca
+                </button>
+              </div>
+            </div>
+            <div className="editor-shell__stage-canvas editor-scrollarea">
+              <EditorCanvas readOnly={editorReadOnly} />
+            </div>
           </div>
-          <EditorProperties
-            readOnly={editorReadOnly}
-            canManageAssets={canManageAssets}
-            versions={versions}
-            approvals={approvals}
-            rollbackPending={rollbackPending}
-            createVersionPending={createVersionPending}
-            onCreateVersion={canCreateVersion ? handleCreateVersion : undefined}
-            onRollback={canRollback ? handleRollback : undefined}
-          />
+          {showInspector ? (
+            <EditorProperties
+              readOnly={editorReadOnly}
+              canManageAssets={canManageAssets}
+              versions={versions}
+              approvals={approvals}
+              rollbackPending={rollbackPending}
+              createVersionPending={createVersionPending}
+              onCreateVersion={canCreateVersion ? handleCreateVersion : undefined}
+              onRollback={canRollback ? handleRollback : undefined}
+            />
+          ) : (
+            <div />
+          )}
         </div>
 
         <EditorStatusBar />
       </section>
-
-      <aside
-        className="panel"
-        style={{
-          position: "fixed",
-          right: 18,
-          top: 96,
-          width: 260,
-          padding: 16,
-          display: "none"
-        }}
-      >
-        <EditorPreview document={history.present} />
-      </aside>
     </main>
   );
 }

@@ -7,6 +7,7 @@ export function ModelPrintForm({
   form,
   templateId,
   categoryLabel,
+  quantity,
   responsibleLocked,
   manufacturedLocked,
   expiresLocked,
@@ -21,6 +22,7 @@ export function ModelPrintForm({
   form: QuickPrintFormValues;
   templateId: string;
   categoryLabel: string;
+  quantity: number;
   responsibleLocked: boolean;
   manufacturedLocked: boolean;
   expiresLocked: boolean;
@@ -43,8 +45,16 @@ export function ModelPrintForm({
         <div className="model-print-form__section-header">
           <strong>Preenchimento operacional</strong>
           <div className="muted" style={{ fontSize: 13 }}>
-            Revise apenas o necessario e mantenha a impressao fluindo com o minimo de atrito.
+            Revise apenas o necessario, mantenha os campos sensiveis travados por padrao e siga
+            para a impressao com o minimo de atrito.
           </div>
+        </div>
+
+        <div className="model-print-form__context">
+          <span className="model-library-pill">Categoria: {categoryLabel}</span>
+          <span className="model-library-pill">
+            Lote: {quantity} etiqueta{quantity > 1 ? "s" : ""}
+          </span>
         </div>
 
         <div className="model-print-form__content">

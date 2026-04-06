@@ -36,10 +36,10 @@ export function UnlockableField({
           onClick={onToggle}
           className="unlockable-field__toggle"
           aria-pressed={!locked}
-          aria-label={locked ? `Liberar ${label}` : `Bloquear ${label}`}
+          aria-label={locked ? `Editar ${label}` : `Fixar ${label}`}
         >
           <span className="unlockable-field__toggle-indicator" aria-hidden="true" />
-          <span>{locked ? "Liberar" : "Bloquear"}</span>
+          <span>{locked ? "Editar" : "Fixar"}</span>
         </button>
       </div>
 

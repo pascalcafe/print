@@ -52,50 +52,23 @@ export const MODEL_CATEGORY_CONFIG: Record<ModelCategory, CategoryDefinition> = 
     accent: "#0284c7",
     soft: "rgba(2, 132, 199, 0.10)",
     defaultResponsible: "Equipe Bebidas",
-    keywords: ["bebida", "suco", "cafe", "chá", "cha", "drink", "agua", "refrigerante"]
+    keywords: ["bebida", "suco", "cafe", "cha", "drink", "agua", "refrigerante"]
   },
   refeicao: {
-    label: "Refeição",
+    label: "Refeicao",
     description: "Refeicoes completas, marmitas e pratos principais.",
     accent: "#16a34a",
     soft: "rgba(22, 163, 74, 0.10)",
     defaultResponsible: "Equipe Cozinha",
-    keywords: ["refeicao", "refeição", "almoco", "almoço", "jantar", "marmita", "prato"]
+    keywords: ["refeicao", "almoco", "jantar", "marmita", "prato"]
   }
 };
 
 const FIELD_MATCHERS = {
-  productName: [
-    "produto",
-    "product",
-    "item",
-    "descricao",
-    "descrição",
-    "nome produto",
-    "nome do produto"
-  ],
-  responsibleName: [
-    "responsavel",
-    "responsável",
-    "responsible",
-    "manipulador",
-    "preparado por"
-  ],
-  manufacturedAt: [
-    "fabricacao",
-    "fabricação",
-    "fabricado",
-    "manufact",
-    "producao",
-    "produção"
-  ],
-  expiresAt: [
-    "validade",
-    "vencimento",
-    "expire",
-    "expiration",
-    "expira"
-  ],
+  productName: ["produto", "product", "item", "descricao", "nome produto", "nome do produto"],
+  responsibleName: ["responsavel", "responsible", "manipulador", "preparado por"],
+  manufacturedAt: ["fabricacao", "fabricado", "manufact", "producao"],
+  expiresAt: ["validade", "vencimento", "expire", "expiration", "expira"],
   quantity: ["quantidade", "quantity", "qtd", "qtde", "etiquetas", "labels"]
 } as const;
 
@@ -121,7 +94,7 @@ export const normalizeModelCategory = (value: unknown): ModelCategory | null => 
   }
 
   const normalized = normalizeText(value);
-  if (normalized === "refeicao" || normalized === "refeição") {
+  if (normalized === "refeicao") {
     return "refeicao";
   }
 
@@ -175,13 +148,14 @@ export const buildInitialQuickPrintForm = (category: ModelCategory): QuickPrintF
   };
 };
 
-const findMatchingFieldKey = (document: LabelDocument, matcherKey: keyof typeof FIELD_MATCHERS) => {
+const findMatchingFieldKey = (
+  document: LabelDocument,
+  matcherKey: keyof typeof FIELD_MATCHERS
+) => {
   const keywords = FIELD_MATCHERS[matcherKey];
 
   return document.dataSchema.find((field) => {
-    const haystack = normalizeText(
-      `${field.key} ${field.label} ${field.description ?? ""}`
-    );
+    const haystack = normalizeText(`${field.key} ${field.label} ${field.description ?? ""}`);
     return keywords.some((keyword) => haystack.includes(normalizeText(keyword)));
   })?.key;
 };

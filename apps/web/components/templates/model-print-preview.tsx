@@ -11,11 +11,13 @@ const PREVIEW_MAX_HEIGHT = 420;
 export function ModelPrintPreview({
   document,
   previewPayload,
-  loading
+  loading,
+  quantity
 }: {
   document: LabelDocument | null;
   previewPayload: PreviewPayload;
   loading: boolean;
+  quantity: number;
 }) {
   const previewScale = useMemo(() => {
     if (!document) {
@@ -33,9 +35,15 @@ export function ModelPrintPreview({
     <aside className="model-print-modal__preview">
       <header className="model-print-preview__header">
         <div className="muted" style={{ fontSize: 12 }}>
-          Preview do modelo
+          Preview oficial do modelo
         </div>
         <strong>Etiqueta pronta para impressao</strong>
+        <div className="model-print-preview__pill-row">
+          <span className="model-library-pill">Mesmo renderer do preview e da impressao</span>
+          <span className="model-library-pill">
+            {quantity} etiqueta{quantity > 1 ? "s" : ""}
+          </span>
+        </div>
         {document ? (
           <div className="model-print-preview__meta">
             {document.document.width} x {document.document.height} {document.document.unit}

@@ -27,26 +27,24 @@ export function EditorLibrary({ readOnly = false }: { readOnly?: boolean }) {
   const addCanvasElement = useEditorStore((state) => state.addCanvasElement);
 
   return (
-    <aside className="editor-sidebar">
+    <aside className="editor-sidebar editor-sidebar--library">
       <div className="editor-sidebar__header">
         <div className="muted" style={{ fontSize: 12, marginBottom: 8 }}>
-          Biblioteca
+          Inserir
         </div>
-        <strong>Elementos</strong>
+        <strong>Biblioteca de elementos</strong>
       </div>
 
-      <div className="editor-sidebar__body" style={{ display: "grid", gap: 12, alignContent: "start" }}>
+      <div className="editor-sidebar__body editor-library__list" style={{ display: "grid", gap: 10, alignContent: "start" }}>
         {items.map((item) => (
           <button
             key={`${item.type}-${item.label}`}
+            className="editor-library__item"
             disabled={readOnly}
             onClick={() => addCanvasElement(item.type, { variant: item.variant })}
             style={{
               textAlign: "left",
               background: readOnly ? "rgba(255,255,255,0.55)" : "#fff",
-              border: "1px solid var(--line)",
-              borderRadius: 16,
-              padding: 14,
               display: "grid",
               gap: 6,
               opacity: readOnly ? 0.6 : 1,

@@ -3,10 +3,13 @@
 import Link from "next/link";
 import { StatusBadge } from "@easyprint/ui";
 import type { TemplateListItem } from "../../lib/api";
-import {
-  getCategoryDefinition,
-  type ModelCategory
-} from "../../lib/template-library";
+import { getCategoryDefinition, type ModelCategory } from "../../lib/template-library";
+
+const formatTemplateDate = (value: string) =>
+  new Intl.DateTimeFormat("pt-BR", {
+    day: "2-digit",
+    month: "short"
+  }).format(new Date(value));
 
 export function TemplateModelCard({
   template,
@@ -22,136 +25,78 @@ export function TemplateModelCard({
   const categoryConfig = getCategoryDefinition(category);
 
   return (
-    <article
-      className="panel"
-      style={{
-        padding: 20,
-        display: "grid",
-        gap: 16,
-        borderRadius: 20
-      }}
-    >
-      <button
-        type="button"
-        onClick={onOpen}
-        style={{
-          display: "grid",
-          gap: 16,
-          textAlign: "left",
-          background: "transparent",
-          border: "none",
-          padding: 0
-        }}
-      >
+    <article className="panel model-library-card">
+      <button type="button" className="model-library-card__surface" onClick={onOpen}>
         <div
+          className="model-library-card__preview"
           style={{
-            padding: 18,
-            minHeight: 152,
-            borderRadius: 18,
-            border: "1px solid var(--line)",
-            background: `linear-gradient(135deg, ${categoryConfig.soft}, rgba(255,255,255,0.94))`,
-            display: "grid",
-            alignContent: "space-between",
-            gap: 12
+            background: `linear-gradient(145deg, ${categoryConfig.soft}, rgba(255,255,255,0.94))`
           }}
         >
-          <div
-            style={{
-              width: "fit-content",
-              padding: "6px 10px",
-              borderRadius: 999,
-              background: "#ffffff",
-              color: categoryConfig.accent,
-              border: `1px solid ${categoryConfig.soft}`,
-              fontSize: 12,
-              fontWeight: 700
-            }}
-          >
+          <div className="model-library-card__preview-tag" style={{ color: categoryConfig.accent }}>
             {categoryConfig.label}
           </div>
-          <div
-            style={{
-              width: 190,
-              height: 88,
-              background: "#fff",
-              borderRadius: 12,
-              border: "1px solid rgba(15,23,42,0.08)",
-              boxShadow: "0 8px 20px rgba(15,23,42,0.06)",
-              padding: 12,
-              display: "grid",
-              gap: 8
-            }}
-          >
+
+          <div className="model-library-card__label">
             <div
-              style={{
-                width: "62%",
-                height: 10,
-                borderRadius: 999,
-                background: categoryConfig.soft
-              }}
+              className="model-library-card__label-top"
+              style={{ background: categoryConfig.accent }}
             />
-            <div
-              style={{
-                width: "88%",
-                height: 8,
-                borderRadius: 999,
-                background: "rgba(15,23,42,0.08)"
-              }}
-            />
-            <div
-              style={{
-                width: "54%",
-                height: 8,
-                borderRadius: 999,
-                background: "rgba(15,23,42,0.08)"
-              }}
-            />
+            <div className="model-library-card__label-content">
+              <div
+                className="model-library-card__label-title"
+                style={{ background: categoryConfig.soft }}
+              />
+              <div className="model-library-card__label-line" />
+              <div className="model-library-card__label-line model-library-card__label-line--short" />
+              <div className="model-library-card__label-code" />
+              <div className="model-library-card__label-footer">
+                <span />
+                <span />
+              </div>
+            </div>
           </div>
         </div>
 
-        <div style={{ display: "grid", gap: 8 }}>
-          <div style={{ display: "grid", gap: 4 }}>
-            <div style={{ fontWeight: 600 }}>{template.name}</div>
-            <div className="muted" style={{ fontSize: 13 }}>
-              {categoryConfig.description}
-            </div>
+        <div className="model-library-card__content">
+          <div className="model-library-card__title-block">
+            <div className="model-library-card__eyebrow">Modelo operacional</div>
+            <strong>{template.name}</strong>
+            <div className="muted">{categoryConfig.description}</div>
           </div>
 
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 8,
-              flexWrap: "wrap"
-            }}
-          >
-            <span className="muted" style={{ fontSize: 14 }}>
-              v{template.currentVersion}
-            </span>
+          <div className="model-library-card__meta">
+            <span className="model-library-pill">v{template.currentVersion}</span>
             <StatusBadge status={template.status}>{template.status}</StatusBadge>
             {template.lastPublishedVersion ? (
-              <span className="muted" style={{ fontSize: 12 }}>
+              <span className="model-library-pill">
                 publicado v{template.lastPublishedVersion}
               </span>
             ) : null}
           </div>
+
+          <div className="model-library-card__details">
+            <span>Responsavel base: {categoryConfig.defaultResponsible}</span>
+            <span>Atualizado em {formatTemplateDate(template.updatedAt)}</span>
+          </div>
         </div>
       </button>
 
-      <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-        <button
-          type="button"
-          onClick={onOpen}
-          style={{
-            background: "var(--primary)",
-            color: "#fff",
-            border: "none",
-            paddingInline: 16
-          }}
-        >
-          Preencher e imprimir
-        </button>
-        {canEdit ? <Link href={`/editor/${template.id}`}>Editar modelo</Link> : null}
+      <div className="model-library-card__footer">
+        <div className="model-library-card__footer-copy">
+          Entre pelo fluxo rapido ou abra o mesmo layout no editor para ajustes livres.
+        </div>
+
+        <div className="model-library-card__actions">
+          <button type="button" className="model-library-card__primary" onClick={onOpen}>
+            Preencher e imprimir
+          </button>
+          {canEdit ? (
+            <Link className="model-library-card__secondary" href={`/editor/${template.id}`}>
+              Abrir no editor
+            </Link>
+          ) : null}
+        </div>
       </div>
     </article>
   );

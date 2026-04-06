@@ -357,7 +357,7 @@ export function EditorCanvas({ readOnly = false }: { readOnly?: boolean }) {
           minHeight: "100%",
           display: "grid",
           placeItems: "center",
-          padding: "72px 88px"
+          padding: "48px 56px"
         }}
       >
         <div
@@ -367,8 +367,8 @@ export function EditorCanvas({ readOnly = false }: { readOnly?: boolean }) {
             width: document.document.width * stageScale,
             height: document.document.height * stageScale,
             background: document.document.background,
-            borderRadius: 22,
-            boxShadow: "0 24px 50px rgba(15, 23, 42, 0.14)",
+            borderRadius: 20,
+            boxShadow: "0 20px 42px rgba(15, 23, 42, 0.12)",
             overflow: "hidden",
             backgroundImage: gridEnabled
               ? "linear-gradient(rgba(15,23,42,0.045) 1px, transparent 1px), linear-gradient(90deg, rgba(15,23,42,0.045) 1px, transparent 1px)"
@@ -488,15 +488,15 @@ export function EditorCanvas({ readOnly = false }: { readOnly?: boolean }) {
         className="muted"
         style={{
           position: "sticky",
-          left: 16,
-          bottom: 16,
+          left: 20,
+          bottom: 20,
           width: "fit-content",
-          padding: "8px 12px",
+          padding: "7px 11px",
           borderRadius: 999,
-          background: "rgba(255,255,255,0.82)",
+          background: "rgba(255,255,255,0.76)",
           border: "1px solid var(--line)",
           backdropFilter: "blur(10px)",
-          margin: "0 0 16px 16px",
+          margin: "0 0 20px 20px",
           fontSize: 12
         }}
       >

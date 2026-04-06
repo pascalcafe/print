@@ -101,7 +101,7 @@ export function EditorProperties({
   };
 
   return (
-    <aside className="editor-sidebar">
+    <aside className="editor-sidebar editor-sidebar--inspector">
       <div className="editor-sidebar__header">
         <div className="muted" style={{ fontSize: 12, marginBottom: 8 }}>
           Propriedades
