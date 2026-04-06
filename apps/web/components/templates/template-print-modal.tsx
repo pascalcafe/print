@@ -433,9 +433,17 @@ export function TemplatePrintModal({
             <div>
               <h2 className="model-print-modal__title">{template.name}</h2>
               <p className="model-print-modal__subtitle">
-                Preencha rapidamente os dados operacionais, revise o preview e confirme a
-                impressao no mesmo fluxo.
+                Preencha rapidamente os dados operacionais, revise a etiqueta com a mesma base do
+                preview oficial e confirme a impressao no mesmo fluxo.
               </p>
+            </div>
+
+            <div className="model-print-modal__header-meta">
+              <span className="model-library-pill">Fluxo rapido</span>
+              <span className="model-library-pill">Preview = impressao</span>
+              <span className="model-library-pill">
+                {form.quantity} etiqueta{form.quantity > 1 ? "s" : ""}
+              </span>
             </div>
           </div>
 
@@ -451,6 +459,7 @@ export function TemplatePrintModal({
                 form={form}
                 templateId={template.id}
                 categoryLabel={categoryConfig.label}
+                quantity={form.quantity}
                 responsibleLocked={responsibleLocked}
                 manufacturedLocked={manufacturedLocked}
                 expiresLocked={expiresLocked}
@@ -468,6 +477,7 @@ export function TemplatePrintModal({
               canPrint={canPrint}
               canSubmit={canSubmit}
               printing={printing}
+              quantity={form.quantity}
               onClose={onClose}
               onPrint={() => void handlePrint()}
             />
@@ -477,6 +487,7 @@ export function TemplatePrintModal({
             document={document}
             previewPayload={previewPayload}
             loading={loading}
+            quantity={form.quantity}
           />
         </div>
       </section>

@@ -75,10 +75,7 @@ function TemplatesPageContent() {
     let active = true;
     setRouteLoading(true);
 
-    void Promise.all([
-      fetchPrinters(session, { active: "true" }),
-      fetchPrintProfiles(session)
-    ])
+    void Promise.all([fetchPrinters(session, { active: "true" }), fetchPrintProfiles(session)])
       .then(([nextPrinters, nextProfiles]) => {
         if (!active) return;
         setPrinters(nextPrinters);
@@ -132,14 +129,28 @@ function TemplatesPageContent() {
     [categoryFilter, templatesWithCategory]
   );
 
-  const selectedCategory =
-    selectedTemplate ? inferTemplateCategory(selectedTemplate) : null;
+  const selectedCategory = selectedTemplate ? inferTemplateCategory(selectedTemplate) : null;
+  const activeCategoryDefinition =
+    categoryFilter === "all" ? null : getCategoryDefinition(categoryFilter);
+  const publishedCount = templatesWithCategory.filter(
+    (template) => template.status === "PUBLISHED"
+  ).length;
+  const reviewableCount = templatesWithCategory.filter((template) =>
+    ["APPROVED", "PUBLISHED"].includes(template.status)
+  ).length;
+  const routeSummary = !canPrintTemplates
+    ? "Seu papel atual nao libera impressao operacional."
+    : routeLoading
+      ? "Preparando rota operacional e consultando impressoras ativas."
+      : printers.length > 0
+        ? `${printers.length} impressora${printers.length > 1 ? "s" : ""} ativa${printers.length > 1 ? "s" : ""} e ${profiles.length} perfil${profiles.length > 1 ? "s" : ""} pronto${profiles.length > 1 ? "s" : ""} para o fluxo rapido.`
+        : "Fluxo rapido disponivel via navegador, pronto para crescer para rotas locais dedicadas.";
 
   return (
     <SessionGuard onSession={setSession}>
       <DashboardShell
         title="Biblioteca de Modelos"
-        subtitle="Organize modelos por categoria, abra rapidamente o fluxo operacional e mantenha o editor visual como origem da verdade."
+        subtitle="Combine uma entrada operacional forte com o editor visual livre. A biblioteca resolve o dia a dia; o editor continua sendo a origem da verdade do layout."
         action={
           canEditTemplates ? (
             <Link
@@ -157,185 +168,231 @@ function TemplatesPageContent() {
           ) : null
         }
       >
-        {!canViewTemplates ? (
-          <div className="panel" style={{ padding: 24 }}>
-            Seu papel atual nao possui acesso a biblioteca de templates.
-          </div>
-        ) : null}
+        <div className="model-library-screen">
+          {!canViewTemplates ? (
+            <div className="panel" style={{ padding: 24 }}>
+              Seu papel atual nao possui acesso a biblioteca de templates.
+            </div>
+          ) : null}
 
-        {feedback ? (
-          <section
-            className="panel"
-            style={{
-              padding: 16,
-              borderRadius: 18,
-              background: "rgba(15, 118, 110, 0.08)",
-              border: "1px solid rgba(15, 118, 110, 0.18)"
-            }}
-          >
-            <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
-              <div>{feedback}</div>
+          {feedback ? (
+            <section className="panel model-library-feedback">
+              <div className="model-library-feedback__copy">{feedback}</div>
               <button type="button" onClick={() => setFeedback(null)}>
                 Fechar
               </button>
-            </div>
-          </section>
-        ) : null}
-
-        {canViewTemplates ? (
-          <>
-            <section
-              className="panel"
-              style={{
-                padding: 18,
-                display: "grid",
-                gap: 14,
-                borderRadius: 20,
-                gridTemplateColumns: "minmax(0, 1fr) 180px"
-              }}
-            >
-              <input
-                value={search}
-                onChange={(event) => setSearch(event.target.value)}
-                placeholder="Buscar por nome ou slug"
-              />
-              <select value={statusFilter} onChange={(event) => setStatusFilter(event.target.value)}>
-                <option value="all">Todos os status</option>
-                <option value="DRAFT">Draft</option>
-                <option value="IN_REVIEW">In review</option>
-                <option value="APPROVED">Approved</option>
-                <option value="PUBLISHED">Published</option>
-                <option value="ARCHIVED">Archived</option>
-              </select>
             </section>
+          ) : null}
 
-            <section
-              className="panel"
-              style={{
-                padding: 18,
-                borderRadius: 20,
-                display: "grid",
-                gap: 16
-              }}
-            >
-              <div style={{ display: "grid", gap: 6 }}>
-                <strong>Modelos por categoria</strong>
-                <div className="muted" style={{ fontSize: 13 }}>
-                  Selecione uma categoria para reduzir o ruído visual e operar mais rápido no dia a dia.
+          {canViewTemplates ? (
+            <>
+              <section className="panel model-library-hero">
+                <div className="model-library-hero__intro">
+                  <div className="model-library-hero__eyebrow">
+                    Benchmark funcional: software tecnico leve
+                  </div>
+                  <h2 className="model-library-hero__title">
+                    Biblioteca operacional para imprimir rapido, com ponte direta para a edicao
+                    livre.
+                  </h2>
+                  <p className="model-library-hero__subtitle">
+                    O fluxo rapido comeca pela categoria e termina na impressao. Quando o modelo
+                    precisa evoluir, o editor continua no centro do produto com preview e
+                    impressao compartilhando o mesmo renderer.
+                  </p>
                 </div>
-              </div>
 
-              <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
-                <button
-                  type="button"
-                  onClick={() => setCategoryFilter("all")}
-                  style={{
-                    background: categoryFilter === "all" ? "var(--primary-soft)" : "#fff",
-                    color: categoryFilter === "all" ? "var(--primary)" : "var(--text)"
-                  }}
-                >
-                  Todos ({templatesWithCategory.length})
-                </button>
-                {MODEL_CATEGORIES.map((category) => {
-                  const config = getCategoryDefinition(category);
-                  return (
-                    <button
-                      key={category}
-                      type="button"
-                      onClick={() => setCategoryFilter(category)}
-                      style={{
-                        background: categoryFilter === category ? config.soft : "#fff",
-                        color: categoryFilter === category ? config.accent : "var(--text)"
-                      }}
-                    >
-                      {config.label} ({categoryCounts[category]})
-                    </button>
-                  );
-                })}
-              </div>
+                <div className="model-library-hero__modes">
+                  <article className="model-library-hero__mode">
+                    <div className="model-library-hero__mode-label">Fluxo A</div>
+                    <strong>Biblioteca de modelos</strong>
+                    <p>
+                      Escolha a categoria, abra o modal operacional, preencha o lote e imprima sem
+                      sair do contexto.
+                    </p>
+                  </article>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
-                  gap: 12
-                }}
-              >
-                {MODEL_CATEGORIES.map((category) => {
-                  const config = getCategoryDefinition(category);
-                  return (
-                    <article
-                      key={category}
-                      style={{
-                        padding: 16,
-                        borderRadius: 18,
-                        border: "1px solid var(--line)",
-                        background: config.soft
-                      }}
-                    >
-                      <div style={{ display: "grid", gap: 6 }}>
-                        <strong style={{ color: config.accent }}>{config.label}</strong>
-                        <div className="muted" style={{ fontSize: 13 }}>
-                          {config.description}
-                        </div>
-                        <div style={{ fontSize: 12, fontWeight: 700, color: config.accent }}>
-                          Responsavel padrao: {config.defaultResponsible}
-                        </div>
+                  <article className="model-library-hero__mode">
+                    <div className="model-library-hero__mode-label">Fluxo B</div>
+                    <strong>Edicao livre do template</strong>
+                    <p>
+                      Abra o modelo no editor para ajustar layout, tipografia, campos dinamicos e
+                      a base oficial de preview e impressao.
+                    </p>
+                  </article>
+                </div>
+
+                <div className="model-library-hero__stats">
+                  <div className="model-library-stat">
+                    <span className="model-library-stat__value">
+                      {templatesWithCategory.length}
+                    </span>
+                    <span className="model-library-stat__label">modelos no tenant</span>
+                  </div>
+                  <div className="model-library-stat">
+                    <span className="model-library-stat__value">{publishedCount}</span>
+                    <span className="model-library-stat__label">publicados</span>
+                  </div>
+                  <div className="model-library-stat">
+                    <span className="model-library-stat__value">{reviewableCount}</span>
+                    <span className="model-library-stat__label">prontos para operacao</span>
+                  </div>
+                  <div className="model-library-stat model-library-stat--wide">
+                    <span className="model-library-stat__value">
+                      {canPrintTemplates ? "browser print" : "consulta"}
+                    </span>
+                    <span className="model-library-stat__label">{routeSummary}</span>
+                  </div>
+                </div>
+              </section>
+
+              <section className="panel model-library-toolbar">
+                <div className="model-library-toolbar__copy">
+                  <strong>Entrada forte pela biblioteca</strong>
+                  <div className="muted">
+                    Filtre o que interessa, escolha o modelo certo e siga para impressao rapida ou
+                    ajuste livre no editor.
+                  </div>
+                </div>
+
+                <div className="model-library-toolbar__filters">
+                  <input
+                    value={search}
+                    onChange={(event) => setSearch(event.target.value)}
+                    placeholder="Buscar por nome ou slug"
+                  />
+                  <select
+                    value={statusFilter}
+                    onChange={(event) => setStatusFilter(event.target.value)}
+                  >
+                    <option value="all">Todos os status</option>
+                    <option value="DRAFT">Draft</option>
+                    <option value="IN_REVIEW">In review</option>
+                    <option value="APPROVED">Approved</option>
+                    <option value="PUBLISHED">Published</option>
+                    <option value="ARCHIVED">Archived</option>
+                  </select>
+                </div>
+              </section>
+
+              <section className="model-library-layout">
+                <aside className="panel model-library-categories">
+                  <div className="model-library-categories__header">
+                    <div>
+                      <strong>Categorias operacionais</strong>
+                      <div className="muted">
+                        Cada categoria organiza modelos, responsavel padrao e atalho de uso.
                       </div>
-                    </article>
-                  );
-                })}
-              </div>
-            </section>
-          </>
-        ) : null}
+                    </div>
+                  </div>
 
-        <section
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-            gap: 18
-          }}
-        >
-          {canViewTemplates && loading ? (
-            <div className="muted">Carregando templates...</div>
+                  <button
+                    type="button"
+                    className={`model-library-category ${categoryFilter === "all" ? "is-active" : ""}`}
+                    onClick={() => setCategoryFilter("all")}
+                  >
+                    <div className="model-library-category__row">
+                      <strong>Todos os modelos</strong>
+                      <span>{templatesWithCategory.length}</span>
+                    </div>
+                    <div className="model-library-category__description">
+                      Visao geral para operadores e para quem precisa comparar categorias antes de
+                      abrir um modelo.
+                    </div>
+                  </button>
+
+                  <div className="model-library-category-list">
+                    {MODEL_CATEGORIES.map((category) => {
+                      const config = getCategoryDefinition(category);
+                      return (
+                        <button
+                          key={category}
+                          type="button"
+                          className={`model-library-category ${categoryFilter === category ? "is-active" : ""}`}
+                          onClick={() => setCategoryFilter(category)}
+                        >
+                          <div className="model-library-category__row">
+                            <strong style={{ color: config.accent }}>{config.label}</strong>
+                            <span>{categoryCounts[category]}</span>
+                          </div>
+                          <div className="model-library-category__description">
+                            {config.description}
+                          </div>
+                          <div className="model-library-category__responsible">
+                            Responsavel padrao: {config.defaultResponsible}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </aside>
+
+                <div className="model-library-content">
+                  <section className="panel model-library-content__header">
+                    <div className="model-library-content__copy">
+                      <strong>
+                        {activeCategoryDefinition
+                          ? activeCategoryDefinition.label
+                          : "Biblioteca completa"}
+                      </strong>
+                      <div className="muted">
+                        {activeCategoryDefinition
+                          ? `${activeCategoryDefinition.description} O fluxo rapido ja abre com ${activeCategoryDefinition.defaultResponsible.toLowerCase()} e datas preenchidas.`
+                          : "Navegue por categorias para reduzir ruido visual ou mantenha todos os modelos lado a lado para uma visao mais ampla."}
+                      </div>
+                    </div>
+
+                    <div className="model-library-content__meta">
+                      <span className="model-library-pill">
+                        {visibleTemplates.length}{" "}
+                        {visibleTemplates.length === 1 ? "visivel" : "visiveis"}
+                      </span>
+                      {statusFilter !== "all" ? (
+                        <span className="model-library-pill">status: {statusFilter}</span>
+                      ) : null}
+                      {search ? (
+                        <span className="model-library-pill">busca: {search}</span>
+                      ) : null}
+                    </div>
+                  </section>
+
+                  <section className="model-library-grid">
+                    {loading ? <div className="muted">Carregando templates...</div> : null}
+
+                    {!loading && visibleTemplates.length === 0 ? (
+                      <div className="panel model-library-empty">
+                        Nenhum template encontrado para os filtros atuais.
+                      </div>
+                    ) : null}
+
+                    {!loading &&
+                      visibleTemplates.map((template) => (
+                        <TemplateModelCard
+                          key={template.id}
+                          template={template}
+                          category={template.resolvedCategory}
+                          canEdit={canEditTemplates}
+                          onOpen={() => setSelectedTemplate(template)}
+                        />
+                      ))}
+                  </section>
+                </div>
+              </section>
+            </>
           ) : null}
 
-          {canViewTemplates && !loading && visibleTemplates.length === 0 ? (
-            <div className="panel" style={{ padding: 24 }}>
-              Nenhum template encontrado para os filtros atuais.
-            </div>
-          ) : null}
-
-          {canViewTemplates &&
-            visibleTemplates.map((template) => (
-              <TemplateModelCard
-                key={template.id}
-                template={template}
-                category={template.resolvedCategory}
-                canEdit={canEditTemplates}
-                onOpen={() => setSelectedTemplate(template)}
-              />
-            ))}
-        </section>
-
-        {routeLoading ? (
-          <div className="muted" style={{ fontSize: 13 }}>
-            Preparando rota operacional de impressao...
-          </div>
-        ) : null}
-
-        <TemplatePrintModal
-          open={Boolean(selectedTemplate)}
-          template={selectedTemplate}
-          category={selectedCategory}
-          session={session}
-          printers={printers}
-          profiles={profiles}
-          canPrint={canPrintTemplates}
-          onClose={() => setSelectedTemplate(null)}
-          onPrinted={(message) => setFeedback(message)}
-        />
+          <TemplatePrintModal
+            open={Boolean(selectedTemplate)}
+            template={selectedTemplate}
+            category={selectedCategory}
+            session={session}
+            printers={printers}
+            profiles={profiles}
+            canPrint={canPrintTemplates}
+            onClose={() => setSelectedTemplate(null)}
+            onPrinted={(message) => setFeedback(message)}
+          />
+        </div>
       </DashboardShell>
     </SessionGuard>
   );
