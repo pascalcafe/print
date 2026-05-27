@@ -12,7 +12,7 @@ export default function AgentsPage() {
   const [agents, setAgents] = useState<AgentNodeItem[]>([]);
   const [issuedToken, setIssuedToken] = useState<string | null>(null);
   const [form, setForm] = useState({
-    name: "Agent Sao Paulo 01",
+    name: "Agent Sao Paulo 001",
     code: "sp-local-01",
     description: "Host local do centro de distribuicao"
   });
