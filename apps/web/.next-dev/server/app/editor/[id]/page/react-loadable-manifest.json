@@ -1,0 +1,17 @@
+{
+  "[project]/apps/web/components/editor/qr-symbol-renderer.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/apps/web/components/editor/qr-symbol-renderer.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/_bfb25784._.js",
+      "static/chunks/apps_web_components_editor_qr-symbol-renderer_tsx_2ed50b09._.js"
+    ]
+  },
+  "[project]/apps/web/components/editor/barcode-symbol-renderer.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/apps/web/components/editor/barcode-symbol-renderer.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/c9207_jsbarcode_bin_295219c5._.js",
+      "static/chunks/apps_web_components_editor_barcode-symbol-renderer_tsx_9a9f73e9._.js",
+      "static/chunks/apps_web_components_editor_barcode-symbol-renderer_tsx_2ed50b09._.js"
+    ]
+  }
+}
