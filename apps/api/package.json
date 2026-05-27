@@ -5,6 +5,7 @@
   "scripts": {
     "dev": "concurrently -k -n build,serve -c yellow,cyan \"nest build --watch\" \"nodemon --watch dist/apps/api/src --ext js --delay 2 --exec node dist/apps/api/src/main.js\"",
     "build": "nest build",
+    "start": "node dist/apps/api/src/main.js",
     "lint": "tsc -p tsconfig.json --noEmit",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "prisma:generate": "pnpm exec prisma generate --schema ../../packages/prisma/schema.prisma",

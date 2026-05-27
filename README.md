@@ -59,6 +59,26 @@ O comando `pnpm dev` valida as portas `3000` e `4000` antes de subir o ambiente.
 - `packages/prisma` centraliza schema e migracoes
 - `docs/template-document.md` descreve o formato oficial do JSON da etiqueta
 
+## Deploy de produção
+
+O repositório inclui agora suporte a deploy containerizado com Docker:
+
+- `apps/api/Dockerfile` para backend NestJS
+- `apps/web/Dockerfile` para frontend Next.js
+- `apps/worker/Dockerfile` para worker assíncrono
+- `infra/docker-compose.prod.yml` para orquestrar serviços de produção
+- `infra/env.production.example` com variáveis de ambiente de produção
+- `.dockerignore` para evitar copiar arquivos desnecessários ao build
+
+Passos recomendados:
+
+1. copie `infra/env.production.example` para `infra/env.production`
+2. ajuste `DATABASE_URL`, `NEXT_PUBLIC_API_URL`, `JWT_SECRET` e outros valores
+3. execute `docker compose -f infra/docker-compose.prod.yml up -d --build`
+4. verifique `http://localhost:3000` para o frontend e `http://localhost:4000/api` para a API
+
+Para produção real de alta disponibilidade, use serviços gerenciados ou Kubernetes, inclua TLS, backups de banco e monitoramento.
+
 ## Status atual
 
 O repositorio foi estruturado para o Marco 1 com foco em:
