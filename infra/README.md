@@ -2,7 +2,7 @@
 
 ## Servicos
 
-- PostgreSQL
+- PostgreSQL ;
 - Redis
 - RabbitMQ
 
