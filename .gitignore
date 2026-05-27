@@ -1,0 +1,13 @@
+node_modules
+.next
+.next-dev
+dist
+coverage
+.turbo
+.pnpm-store
+.env
+.env.local
+.env.*
+*.tsbuildinfo
+storage
+apps/web/.web-dev.lock
