@@ -12,3 +12,22 @@ dist
 npm-debug.log*
 pnpm-debug.log*
 coverage
+
+FROM node:20-slim AS base
+WORKDIR /workspace
+RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
+
+# Copiar arquivos da raiz
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
+# Remove packages/ui do workspace (API não precisa)
+RUN sed -i '/packages\/ui/d' pnpm-workspace.yaml
+
+# Copiar apenas os package.json necessários para a API
+COPY apps/api/package.json ./apps/api/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
+COPY packages/prisma/package.json ./packages/prisma/package.json
+# Não copie packages/ui/package.json
+
+RUN pnpm install --frozen-lockfile
+
+# Restante do Dockerfile (build, release) permanece igual...
