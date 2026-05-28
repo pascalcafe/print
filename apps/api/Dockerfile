@@ -3,7 +3,13 @@ WORKDIR /workspace
 RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
 
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
-COPY apps/api/package.json apps/web/package.json apps/worker/package.json packages/shared/package.json packages/prisma/package.json packages/ui/package.json ./
+# copy each workspace package.json into its correct subpath to avoid overwrite
+COPY apps/api/package.json ./apps/api/package.json
+COPY apps/web/package.json ./apps/web/package.json
+COPY apps/worker/package.json ./apps/worker/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
+COPY packages/prisma/package.json ./packages/prisma/package.json
+COPY packages/ui/package.json ./packages/ui/package.json
 RUN pnpm install --frozen-lockfile
 
 FROM base AS build

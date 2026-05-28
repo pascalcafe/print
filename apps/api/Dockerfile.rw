@@ -4,7 +4,10 @@ RUN corepack enable && corepack prepare pnpm@10.14.0 --activate
 
 # Copy only root workspace manifests and api/shared/prisma package manifests to reduce context
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml tsconfig.base.json ./
-COPY apps/api/package.json packages/shared/package.json packages/prisma/package.json ./
+# copy package.json files to their subpaths to avoid overwriting
+COPY apps/api/package.json ./apps/api/package.json
+COPY packages/shared/package.json ./packages/shared/package.json
+COPY packages/prisma/package.json ./packages/prisma/package.json
 RUN pnpm install --frozen-lockfile
 
 FROM base AS build
