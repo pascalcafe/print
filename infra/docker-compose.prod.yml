@@ -29,6 +29,22 @@ services:
       RABBITMQ_DEFAULT_USER: easyprint
       RABBITMQ_DEFAULT_PASS: easyprint
 
+  # Migration runner: executes `prisma migrate deploy` once before API starts
+  migration:
+    build:
+      context: ..
+      dockerfile: apps/api/Dockerfile
+    command: >
+      sh -c "\
+      pnpm --filter @easyprint/api prisma:deploy\
+      "
+    depends_on:
+      postgres:
+        condition: service_healthy
+    env_file:
+      - ./env.production
+    restart: "no"
+
   api:
     build:
       context: ..
@@ -38,9 +54,8 @@ services:
     env_file:
       - ./env.production
     depends_on:
-      - postgres
-      - redis
-      - rabbitmq
+      migration:
+        condition: service_completed_successfully
     restart: unless-stopped
 
   web:
