@@ -10,7 +10,8 @@
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "prisma:generate": "pnpm exec prisma generate --schema ../../packages/prisma/schema.prisma",
     "prisma:migrate": "pnpm exec prisma migrate dev --schema ../../packages/prisma/schema.prisma",
-    "prisma:deploy": "pnpm exec prisma migrate deploy --schema ../../packages/prisma/schema.prisma"
+    "prisma:deploy": "pnpm exec prisma migrate deploy --schema ../../packages/prisma/schema.prisma",
+    "generate:openapi": "ts-node --transpile-only ./scripts/generate-openapi.ts"
   },
   "dependencies": {
     "@easyprint/shared": "workspace:*",
@@ -30,7 +31,9 @@
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.2.2",
-    "rxjs": "^7.8.1"
+    "rxjs": "^7.8.1",
+    "@nestjs/swagger": "^6.0.0",
+    "js-yaml": "^4.1.0"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.5",

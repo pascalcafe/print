@@ -1,0 +1,19 @@
+openapi: 3.0.0
+paths:
+  paths:
+    /health:
+      get:
+        operationId: AppController_getHealth
+        parameters: []
+        responses:
+          '200':
+            description: ''
+info:
+  title: EasyPrint API
+  description: Auto-generated OpenAPI specification
+  version: '1.0'
+  contact: {}
+tags: []
+servers: []
+components:
+  schemas: {}
