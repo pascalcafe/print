@@ -18,6 +18,9 @@ services:
     image: redis:7
     container_name: easyprint-redis
     restart: unless-stopped
+    # Optional service: used by background workers for caching/queues.
+    # Marked as an opt-in profile so it doesn't start in minimal setups.
+    profiles: ["optional"]
     ports:
       - "6379:6379"
 
@@ -25,6 +28,9 @@ services:
     image: rabbitmq:3-management
     container_name: easyprint-rabbitmq
     restart: unless-stopped
+    # Optional service: message broker for async processing.
+    # Start with `docker compose --profile optional up` when needed.
+    profiles: ["optional"]
     ports:
       - "5672:5672"
       - "15672:15672"
