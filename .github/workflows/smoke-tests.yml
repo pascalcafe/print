@@ -78,7 +78,7 @@ jobs:
             sleep 2
           done
 
-      - name: Smoke check: /api/health content
+      - name: "Smoke check: /api/health content"
         run: |
           resp=$(curl -s http://localhost:4000/api/health)
           echo "Response: $resp"
