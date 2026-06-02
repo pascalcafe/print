@@ -1,7 +1,13 @@
 name: Smoke Tests
 
 on:
+  push:
+    branches:
+      - main
+      - chat-monitoring
   pull_request:
+    branches:
+      - main
   workflow_dispatch:
 
 jobs:
@@ -37,6 +43,11 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
+      - name: Install PostgreSQL client utilities
+        run: |
+          sudo apt-get update -y
+          sudo apt-get install -y postgresql-client
+
       - name: Wait for Postgres
         run: |
           echo "Waiting for Postgres to be ready..."
@@ -47,7 +58,7 @@ jobs:
       - name: Run Prisma migrations (retry)
         run: |
           for i in {1..10}; do
-            pnpm --filter @easyprint/api prisma:deploy && break || sleep 5
+            pnpm --filter @easyprint/api run prisma:deploy && break || sleep 5
           done
 
       - name: Build API
