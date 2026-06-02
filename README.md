@@ -59,7 +59,6 @@ O comando `pnpm dev` valida as portas `3000` e `4000` antes de subir o ambiente.
 - `packages/prisma` centraliza schema e migracoes
 - `docs/template-document.md` descreve o formato oficial do JSON da etiqueta
 
-<<<<<<< HEAD
 ## Deploy de produção
 
 O repositório agora inclui suporte a deployment containerizado com Docker:
@@ -79,8 +78,6 @@ Passos recomendados:
 
 Para produção real de alta disponibilidade, use serviços gerenciados ou Kubernetes, inclua TLS, backups de banco e monitoramento.
 
-=======
->>>>>>> 3960b65 (Initial commit)
 ## Status atual
 
 O repositorio foi estruturado para o Marco 1 com foco em:
@@ -136,4 +133,4 @@ $env:AGENT_TOKEN="TOKEN_EMITIDO"
 pnpm --filter @easyprint/agent dev
 ```
 
-Mais detalhes em `docs/architecture.md`, `docs/conventions.md`, `docs/marco-1.md`, `docs/marco-1-implementation-plan.md`, `docs/marco-1-verification.md`, `docs/auth-rbac.md`, `docs/marco-2-implementation-plan.md`, `docs/marco-4-architecture.md`, `docs/sso-oidc.md`, `docs/template-approval.md`, `docs/observability.md` e `docs/agent-local.md`.
+Mais detalhes em `docs/architecture.md`, `docs/execution-infra.md`, `docs/prisma.md`, `docs/conventions.md`, `docs/marco-1.md`, `docs/marco-1-implementation-plan.md`, `docs/marco-1-verification.md`, `docs/auth-rbac.md`, `docs/marco-2-implementation-plan.md`, `docs/marco-4-architecture.md`, `docs/sso-oidc.md`, `docs/template-approval.md`, `docs/observability.md` e `docs/agent-local.md`.

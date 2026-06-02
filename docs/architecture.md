@@ -16,6 +16,25 @@ packages/
 docs/         -> decisoes arquiteturais
 ```
 
+## Visão de produto e objetivos
+
+EasyPrint foi projetado para oferecer uma plataforma de criação, aprovacao e execucao de impressao de etiquetas e documentos com controle de templates:
+
+- editor visual de templates configuraveis
+- versionamento e auditoria de templates
+- geracao de trabalhos de impressao e rastreamento de execucao
+- suporte a agentes locais e execucao desacoplada
+- governanca por identidade, aprovacao e observabilidade
+
+## Responsabilidades dos principais módulos
+
+- `apps/api`: autenticacao, tenancy, persistencia, rotas de CRUD, health checks, jobs e integrações de backend.
+- `apps/web`: interface de usuario, editor visual, gerenciamento de templates, login e dashboards.
+- `apps/worker`: execucao assicrona de jobs, processamento de fila e futura orquestracao de impressao.
+- `packages/shared`: contratos de dominio, tipos compartilhados, validacoes de documento e logica do editor.
+- `packages/prisma`: schema Prisma, migracoes, geracao de cliente e scripts de banco.
+- `packages/ui`: tokens de design, componentes compartilhados e utilitarios visuais.
+
 ## Decisoes principais
 
 ### 1. JSON do template como fonte unica da verdade
