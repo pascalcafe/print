@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: easyprint-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: easyprint
+      POSTGRES_USER: easyprint
+      POSTGRES_PASSWORD: easyprint
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7
+    container_name: easyprint-redis
+    restart: unless-stopped
+    # Optional service: used by background workers for caching/queues.
+    # Marked as an opt-in profile so it doesn't start in minimal setups.
+    profiles: ["optional"]
+    ports:
+      - "6379:6379"
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: easyprint-rabbitmq
+    restart: unless-stopped
+    # Optional service: message broker for async processing.
+    # Start with `docker compose --profile optional up` when needed.
+    profiles: ["optional"]
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: easyprint
+      RABBITMQ_DEFAULT_PASS: easyprint
+
+volumes:
+  postgres_data:
+

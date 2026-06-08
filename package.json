@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "node ./scripts/dev.mjs",
     "build": "pnpm -r build",
+<<<<<<< HEAD
     "deploy:prod": "docker compose -f infra/docker-compose.prod.yml up -d --build",
+=======
+>>>>>>> 3960b65 (Initial commit)
     "lint": "pnpm -r lint",
     "typecheck": "pnpm -r typecheck",
     "db:generate": "pnpm --filter @easyprint/prisma generate",

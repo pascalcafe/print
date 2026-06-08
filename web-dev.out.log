@@ -1,0 +1,14 @@
+
+> @easyprint/web@0.1.0 dev C:\Users\ti\Documents\VSCODE\EasyPrint\apps\web
+> next dev
+
+   ▲ Next.js 15.5.14
+   - Local:        http://localhost:3003
+   - Network:      http://192.168.15.50:3003
+
+ ✓ Starting...
+ ✓ Ready in 4.6s
+ ○ Compiling /login ...
+ ✓ Compiled /login in 17.4s (587 modules)
+ HEAD /login 200 in 2935ms
+ ✓ Compiled in 2.7s (239 modules)

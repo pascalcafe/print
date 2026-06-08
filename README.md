@@ -133,4 +133,4 @@ $env:AGENT_TOKEN="TOKEN_EMITIDO"
 pnpm --filter @easyprint/agent dev
 ```
 
-Mais detalhes em `docs/architecture.md`, `docs/conventions.md`, `docs/marco-1.md`, `docs/marco-1-implementation-plan.md`, `docs/marco-1-verification.md`, `docs/auth-rbac.md`, `docs/marco-2-implementation-plan.md`, `docs/marco-4-architecture.md`, `docs/sso-oidc.md`, `docs/template-approval.md`, `docs/observability.md` e `docs/agent-local.md`.
+Mais detalhes em `docs/architecture.md`, `docs/execution-infra.md`, `docs/prisma.md`, `docs/conventions.md`, `docs/marco-1.md`, `docs/marco-1-implementation-plan.md`, `docs/marco-1-verification.md`, `docs/auth-rbac.md`, `docs/marco-2-implementation-plan.md`, `docs/marco-4-architecture.md`, `docs/sso-oidc.md`, `docs/template-approval.md`, `docs/observability.md` e `docs/agent-local.md`.

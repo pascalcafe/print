@@ -1,0 +1,498 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TemplateStatus {
+  DRAFT
+  IN_REVIEW
+  APPROVED
+  PUBLISHED
+  ARCHIVED
+}
+
+enum UserStatus {
+  ACTIVE
+  INVITED
+  DISABLED
+}
+
+enum PrintJobStatus {
+  QUEUED
+  RUNNING
+  COMPLETED
+  FAILED
+  CANCELED
+}
+
+enum TemplateApprovalStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELED
+}
+
+enum ExternalIdentityProviderType {
+  OIDC
+  SAML
+}
+
+enum AgentNodeStatus {
+  ACTIVE
+  DISABLED
+}
+
+enum JobDispatchAttemptStatus {
+  CLAIMED
+  COMPLETED
+  FAILED
+  RETRY_SCHEDULED
+  CANCELED
+}
+
+model Tenant {
+  id                   String                     @id @default(cuid())
+  name                 String
+  slug                 String                     @unique
+  status               String                     @default("active")
+  settings             TenantSettings?
+  users                UserTenant[]
+  templates            Template[]
+  printers             Printer[]
+  printProfiles        PrintProfile[]
+  printJobs            PrintJob[]
+  auditLogs            AuditLog[]
+  identityProviders    ExternalIdentityProvider[]
+  externalAuthSessions ExternalAuthSession[]
+  agentNodes           AgentNode[]
+  signatures           ElectronicSignatureRecord[]
+  createdAt            DateTime                   @default(now())
+  updatedAt            DateTime                   @updatedAt
+}
+
+model TenantSettings {
+  id                 String   @id @default(cuid())
+  tenantId           String   @unique
+  defaultUnit        String   @default("mm")
+  defaultDpi         Int      @default(203)
+  allowDraftPrinting Boolean  @default(true)
+  tenant             Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model User {
+  id                          String                     @id @default(cuid())
+  email                       String                     @unique
+  name                        String
+  passwordHash                String
+  status                      UserStatus                 @default(ACTIVE)
+  memberships                 UserTenant[]
+  auditLogs                   AuditLog[]
+  externalIdentities          UserExternalIdentity[]
+  createdTemplateVersions     TemplateVersion[]          @relation("TemplateVersionCreatedBy")
+  submittedTemplateVersions   TemplateVersion[]          @relation("TemplateVersionSubmittedBy")
+  approvedTemplateVersions    TemplateVersion[]          @relation("TemplateVersionApprovedBy")
+  publishedTemplateVersions   TemplateVersion[]          @relation("TemplateVersionPublishedBy")
+  requestedTemplateApprovals  TemplateApproval[]         @relation("TemplateApprovalRequestedBy")
+  decidedTemplateApprovals    TemplateApproval[]         @relation("TemplateApprovalDecidedBy")
+  signatureRecords            ElectronicSignatureRecord[]
+  requestedPrintJobs          PrintJob[]                 @relation("PrintJobRequestedBy")
+  canceledPrintJobs           PrintJob[]                 @relation("PrintJobCanceledBy")
+  createdAt                   DateTime                   @default(now())
+  updatedAt                   DateTime                   @updatedAt
+}
+
+model Role {
+  id          String           @id @default(cuid())
+  key         String           @unique
+  name        String
+  permissions RolePermission[]
+  users       UserTenant[]
+  createdAt   DateTime         @default(now())
+}
+
+model Permission {
+  id        String           @id @default(cuid())
+  key       String           @unique
+  name      String
+  roles     RolePermission[]
+  createdAt DateTime         @default(now())
+}
+
+model RolePermission {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  permission   Permission @relation(fields: [permissionId], references: [id], onDelete: Cascade)
+
+  @@id([roleId, permissionId])
+}
+
+model UserTenant {
+  userId    String
+  tenantId  String
+  roleId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  role      Role     @relation(fields: [roleId], references: [id])
+  createdAt DateTime @default(now())
+
+  @@id([userId, tenantId])
+}
+
+model Template {
+  id                   String             @id @default(cuid())
+  tenantId             String
+  createdById          String
+  updatedById          String
+  name                 String
+  slug                 String
+  status               TemplateStatus     @default(DRAFT)
+  currentVersion       Int                @default(1)
+  lastPublishedVersion Int?
+  reviewRequestedAt    DateTime?
+  approvedAt           DateTime?
+  publishedAt          DateTime?
+  documentJson         Json
+  settingsJson         Json?
+  dataSchemaJson       Json?
+  metadataJson         Json?
+  tenant               Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  versions             TemplateVersion[]
+  approvals            TemplateApproval[]
+  dataFields           TemplateDataField[]
+  assets               TemplateAsset[]
+  printJobs            PrintJob[]
+  createdAt            DateTime           @default(now())
+  updatedAt            DateTime           @updatedAt
+
+  @@unique([tenantId, slug])
+}
+
+model TemplateVersion {
+  id            String             @id @default(cuid())
+  templateId    String
+  version       Int
+  status        TemplateStatus
+  snapshotJson  Json
+  notes         String?
+  createdById   String?
+  submittedAt   DateTime?
+  submittedById String?
+  approvedAt    DateTime?
+  approvedById  String?
+  publishedAt   DateTime?
+  publishedById String?
+  archivedAt    DateTime?
+  template      Template           @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  createdBy     User?              @relation("TemplateVersionCreatedBy", fields: [createdById], references: [id], onDelete: SetNull)
+  submittedBy   User?              @relation("TemplateVersionSubmittedBy", fields: [submittedById], references: [id], onDelete: SetNull)
+  approvedBy    User?              @relation("TemplateVersionApprovedBy", fields: [approvedById], references: [id], onDelete: SetNull)
+  publishedBy   User?              @relation("TemplateVersionPublishedBy", fields: [publishedById], references: [id], onDelete: SetNull)
+  approvals     TemplateApproval[]
+  createdAt     DateTime           @default(now())
+
+  @@unique([templateId, version])
+}
+
+model TemplateApproval {
+  id                String                 @id @default(cuid())
+  templateId        String
+  templateVersionId String?
+  requestedById     String?
+  decidedById       String?
+  status            TemplateApprovalStatus @default(PENDING)
+  requestNotes      String?
+  decisionNotes     String?
+  requestedAt       DateTime               @default(now())
+  decidedAt         DateTime?
+  contextJson       Json?
+  template          Template               @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  templateVersion   TemplateVersion?       @relation(fields: [templateVersionId], references: [id], onDelete: SetNull)
+  requestedBy       User?                  @relation("TemplateApprovalRequestedBy", fields: [requestedById], references: [id], onDelete: SetNull)
+  decidedBy         User?                  @relation("TemplateApprovalDecidedBy", fields: [decidedById], references: [id], onDelete: SetNull)
+  signatures        ElectronicSignatureRecord[]
+  createdAt         DateTime               @default(now())
+  updatedAt         DateTime               @updatedAt
+}
+
+model TemplateDataField {
+  id               String   @id @default(cuid())
+  templateId       String
+  key              String
+  label            String
+  type             String
+  required         Boolean  @default(false)
+  description      String?
+  sampleValue      String?
+  fallbackValue    String?
+  formatType       String?
+  formatConfigJson Json?
+  template         Template @relation(fields: [templateId], references: [id], onDelete: Cascade)
+
+  @@unique([templateId, key])
+}
+
+model FileAsset {
+  id           String          @id @default(cuid())
+  tenantId     String
+  filename     String
+  mimeType     String
+  storageKey   String
+  sizeInBytes  Int
+  metadataJson Json?
+  templates    TemplateAsset[]
+  createdAt    DateTime        @default(now())
+}
+
+model TemplateAsset {
+  templateId String
+  assetId    String
+  role       String?
+  template   Template  @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  asset      FileAsset @relation(fields: [assetId], references: [id], onDelete: Cascade)
+
+  @@id([templateId, assetId])
+}
+
+model ExternalIdentityProvider {
+  id                String                       @id @default(cuid())
+  tenantId          String
+  name              String
+  slug              String
+  type              ExternalIdentityProviderType @default(OIDC)
+  issuerUrl         String
+  clientId          String
+  clientSecret      String?
+  authorizationUrl  String?
+  tokenUrl          String?
+  userInfoUrl       String?
+  scopesJson        Json?
+  claimMappingJson  Json?
+  autoProvisionUsers Boolean                    @default(false)
+  autoLinkByEmail   Boolean                     @default(true)
+  enabled           Boolean                     @default(true)
+  tenant            Tenant                      @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  userIdentities    UserExternalIdentity[]
+  authSessions      ExternalAuthSession[]
+  createdAt         DateTime                    @default(now())
+  updatedAt         DateTime                    @updatedAt
+
+  @@unique([tenantId, slug])
+}
+
+model UserExternalIdentity {
+  id          String                   @id @default(cuid())
+  providerId  String
+  userId      String
+  subject     String
+  email       String?
+  claimsJson  Json?
+  lastLoginAt DateTime?
+  provider    ExternalIdentityProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  user        User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime                 @default(now())
+  updatedAt   DateTime                 @updatedAt
+
+  @@unique([providerId, subject])
+  @@unique([providerId, userId])
+}
+
+model ExternalAuthSession {
+  id          String                   @id @default(cuid())
+  providerId  String
+  tenantId    String
+  state       String                   @unique
+  nonce       String
+  codeVerifier String
+  redirectUri String
+  expiresAt   DateTime
+  consumedAt  DateTime?
+  provider    ExternalIdentityProvider @relation(fields: [providerId], references: [id], onDelete: Cascade)
+  tenant      Tenant                   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt   DateTime                 @default(now())
+}
+
+model ElectronicSignatureRecord {
+  id                 String            @id @default(cuid())
+  tenantId           String
+  userId             String
+  templateApprovalId String?
+  entityType         String
+  entityId           String
+  action             String
+  challengeType      String            @default("password")
+  reason             String?
+  contextJson        Json?
+  correlationId      String?
+  verifiedAt         DateTime          @default(now())
+  tenant             Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  templateApproval   TemplateApproval? @relation(fields: [templateApprovalId], references: [id], onDelete: SetNull)
+  createdAt          DateTime          @default(now())
+}
+
+model AgentNode {
+  id            String          @id @default(cuid())
+  tenantId      String
+  name          String
+  code          String
+  description   String?
+  status        AgentNodeStatus @default(ACTIVE)
+  authTokenHash String
+  version       String?
+  lastSeenAt    DateTime?
+  metadataJson  Json?
+  tenant        Tenant          @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  printers      Printer[]
+  heartbeats    AgentHeartbeat[]
+  dispatchAttempts JobDispatchAttempt[]
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+
+  @@unique([tenantId, code])
+}
+
+model AgentHeartbeat {
+  id          String    @id @default(cuid())
+  agentNodeId String
+  status      String
+  version     String?
+  hostname    String?
+  metadataJson Json?
+  agentNode   AgentNode @relation(fields: [agentNodeId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+}
+
+model Printer {
+  id             String         @id @default(cuid())
+  tenantId       String
+  agentNodeId    String?
+  name           String
+  code           String
+  manufacturer   String?
+  model          String?
+  dpi            Int
+  connectionType String
+  endpoint       String?
+  isActive       Boolean        @default(true)
+  tenant         Tenant         @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  agentNode      AgentNode?     @relation(fields: [agentNodeId], references: [id], onDelete: SetNull)
+  profiles       PrintProfile[]
+  jobs           PrintJob[]
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime       @updatedAt
+
+  @@unique([tenantId, code])
+}
+
+model PrintProfile {
+  id            String     @id @default(cuid())
+  tenantId      String
+  printerId     String
+  name          String
+  mediaType     String?
+  darkness      Int?
+  speed         Int?
+  copiesDefault Int        @default(1)
+  optionsJson   Json?
+  tenant        Tenant     @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  printer       Printer    @relation(fields: [printerId], references: [id], onDelete: Cascade)
+  jobs          PrintJob[]
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+}
+
+model PrintJob {
+  id              String             @id @default(cuid())
+  tenantId        String
+  templateId      String
+  templateVersion Int?
+  copies          Int                @default(1)
+  source          String?
+  printerId       String?
+  printProfileId  String?
+  requestedById   String?
+  canceledById    String?
+  reprintOfJobId  String?
+  correlationId   String?
+  idempotencyKey  String?
+  retryCount      Int                @default(0)
+  maxAttempts     Int                @default(3)
+  nextAttemptAt   DateTime?
+  status          PrintJobStatus     @default(QUEUED)
+  mode            String             @default("test")
+  payloadJson     Json
+  resolvedDataJson Json?
+  resultJson      Json?
+  failureReason   String?
+  startedAt       DateTime?
+  canceledAt      DateTime?
+  completedAt     DateTime?
+  tenant          Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  template        Template           @relation(fields: [templateId], references: [id], onDelete: Cascade)
+  printer         Printer?           @relation(fields: [printerId], references: [id], onDelete: SetNull)
+  printProfile    PrintProfile?      @relation(fields: [printProfileId], references: [id], onDelete: SetNull)
+  requestedBy     User?              @relation("PrintJobRequestedBy", fields: [requestedById], references: [id], onDelete: SetNull)
+  canceledBy      User?              @relation("PrintJobCanceledBy", fields: [canceledById], references: [id], onDelete: SetNull)
+  reprintOfJob    PrintJob?          @relation("PrintJobReprintChain", fields: [reprintOfJobId], references: [id], onDelete: SetNull)
+  reprints        PrintJob[]         @relation("PrintJobReprintChain")
+  events          PrintJobEvent[]
+  dispatchAttempts JobDispatchAttempt[]
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+
+  @@unique([tenantId, idempotencyKey])
+}
+
+model PrintJobEvent {
+  id            String    @id @default(cuid())
+  printJobId    String
+  type          String
+  message       String
+  correlationId String?
+  payloadJson   Json?
+  printJob      PrintJob  @relation(fields: [printJobId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+}
+
+model JobDispatchAttempt {
+  id             String                   @id @default(cuid())
+  printJobId     String
+  agentNodeId    String?
+  status         JobDispatchAttemptStatus
+  attemptNumber  Int
+  idempotencyKey String                   @unique
+  correlationId  String?
+  scheduledAt    DateTime?
+  claimedAt      DateTime?
+  completedAt    DateTime?
+  errorMessage   String?
+  responseJson   Json?
+  printJob       PrintJob                 @relation(fields: [printJobId], references: [id], onDelete: Cascade)
+  agentNode      AgentNode?               @relation(fields: [agentNodeId], references: [id], onDelete: SetNull)
+  createdAt      DateTime                 @default(now())
+  updatedAt      DateTime                 @updatedAt
+
+  @@unique([printJobId, attemptNumber])
+}
+
+model AuditLog {
+  id            String   @id @default(cuid())
+  tenantId      String
+  userId        String?
+  entityType    String
+  entityId      String
+  action        String
+  correlationId String?
+  payloadJson   Json?
+  ipAddress     String?
+  tenant        Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user          User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+  createdAt     DateTime @default(now())
+}

@@ -1,0 +1,27 @@
+{
+  "name": "@easyprint/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node ./scripts/dev.mjs",
+    "build": "next build",
+    "lint": "pnpm exec next typegen && tsc -p tsconfig.typecheck.json --noEmit",
+    "typecheck": "pnpm exec next typegen && tsc -p tsconfig.typecheck.json --noEmit"
+  },
+  "dependencies": {
+    "@easyprint/shared": "workspace:*",
+    "@easyprint/ui": "workspace:*",
+    "next": "^15.1.2",
+    "qrcode.react": "^4.2.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.1",
+    "@types/react": "^19.0.2",
+    "@types/react-dom": "^19.0.2",
+    "typescript": "^5.7.2"
+  }
+}
